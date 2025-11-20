@@ -1,0 +1,341 @@
+\documentclass[a4paper, landscape]{article}
+\usepackage[left=1.5cm, right=1.5cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\subtxt}[1]{{\small \itshape #1}}
+
+% TikZ Styles
+\tikzset{
+    eventbox/.style={line width=0.8pt}, % Style for border
+    gridline/.style={draw=gray!80, line width=1.0pt},
+    timeline/.style={draw=black, line width=1.5pt},
+    stripe/.style={fill=gray!15} 
+}
+
+\definecolor{cArr}{rgb}{0.9,0.96,0.9}
+\definecolor{cWelc}{rgb}{0.7,0.9,0.7}
+\definecolor{cBye}{rgb}{0.6,0.8,0.6}
+\definecolor{cLect}{rgb}{0.75,0.95,0.95}
+\definecolor{cWork}{rgb}{1.0,0.95,0.8}
+\definecolor{cPrep}{rgb}{1.0,0.85,0.65}
+\definecolor{cPres}{rgb}{1.0,0.7,0.7}
+\definecolor{cLunch}{rgb}{0.85,0.9,0.95}
+\definecolor{cLeis}{rgb}{0.75,0.85,1.0}
+\definecolor{cVisit}{rgb}{0.9,0.85,1.0}
+\definecolor{cSpec}{rgb}{1.0,0.8,0.8}
+
+\begin{document}
+\pagestyle{empty}
+{\Huge \textbf{My Winter School 2025}}
+\vspace{0.23cm}
+
+\begin{tcolorbox}[colback=cSpec!30!white, colframe=black, boxrule=1.25pt, title=\textbf{Saturday, November 29, 2025}]
+\textbf{19:00} -- Welcome Dinner \subtxt{Historic City Center Restaurant}
+\end{tcolorbox}
+\vspace{0.13cm}
+\noindent\makebox[\textwidth][c]{%
+\scalebox{0.48}{%
+\begin{tikzpicture}[x=1cm, y=-1cm]
+\fill[stripe] (1.5, 1.7428571428571427) rectangle (58.74, 3.4857142857142853);
+\fill[stripe] (1.5, 5.228571428571428) rectangle (58.74, 6.971428571428571);
+\fill[stripe] (1.5, 8.714285714285714) rectangle (58.74, 10.457142857142856);
+\fill[stripe] (1.5, 12.2) rectangle (58.74, 13.942857142857141);
+\fill[stripe] (1.5, 15.685714285714283) rectangle (58.74, 17.428571428571427);
+\fill[stripe] (1.5, 19.17142857142857) rectangle (58.74, 20.91428571428571);
+\fill[stripe] (1.5, 22.657142857142855) rectangle (58.74, 24.4);
+\draw[timeline, fill=white] (0, -0.8) rectangle (1.5, 0);
+\node[anchor=center] at (0.75, -0.4) {\textbf{Time}};
+\draw[timeline, fill=white] (1.5, -0.8) rectangle (12.948, 0);
+\node[anchor=center] at (7.224, -0.4) {\textbf{Mon, 01.12}};
+\draw[timeline, fill=white] (12.948, -0.8) rectangle (24.396, 0);
+\node[anchor=center] at (18.672, -0.4) {\textbf{Tue, 02.12}};
+\draw[timeline, fill=white] (24.396, -0.8) rectangle (35.844, 0);
+\node[anchor=center] at (30.12, -0.4) {\textbf{Wed, 03.12}};
+\draw[timeline, fill=white] (35.844, -0.8) rectangle (47.292, 0);
+\node[anchor=center] at (41.568, -0.4) {\textbf{Thu, 04.12}};
+\draw[timeline, fill=white] (47.292, -0.8) rectangle (58.74, 0);
+\node[anchor=center] at (53.016000000000005, -0.4) {\textbf{Fri, 05.12}};
+\draw[gridline] (1.5, 0) -- (1.5, 24.4);
+\draw[gridline] (12.948, 0) -- (12.948, 24.4);
+\draw[gridline] (24.396, 0) -- (24.396, 24.4);
+\draw[gridline] (35.844, 0) -- (35.844, 24.4);
+\draw[gridline] (47.292, 0) -- (47.292, 24.4);
+\draw[gridline] (58.74, 0) -- (58.74, 24.4);
+\draw[gridline] (1.5, 0.0) -- (58.74, 0.0);
+\draw[gridline] (1.5, 0.8714285714285713) -- (58.74, 0.8714285714285713);
+\draw[gridline] (1.5, 1.7428571428571427) -- (58.74, 1.7428571428571427);
+\draw[gridline] (1.5, 2.614285714285714) -- (58.74, 2.614285714285714);
+\draw[gridline] (1.5, 3.4857142857142853) -- (58.74, 3.4857142857142853);
+\draw[gridline] (1.5, 4.357142857142857) -- (58.74, 4.357142857142857);
+\draw[gridline] (1.5, 5.228571428571428) -- (58.74, 5.228571428571428);
+\draw[gridline] (1.5, 6.1) -- (58.74, 6.1);
+\draw[gridline] (1.5, 6.971428571428571) -- (58.74, 6.971428571428571);
+\draw[gridline] (1.5, 7.842857142857142) -- (58.74, 7.842857142857142);
+\draw[gridline] (1.5, 8.714285714285714) -- (58.74, 8.714285714285714);
+\draw[gridline] (1.5, 9.585714285714285) -- (58.74, 9.585714285714285);
+\draw[gridline] (1.5, 10.457142857142856) -- (58.74, 10.457142857142856);
+\draw[gridline] (1.5, 11.328571428571427) -- (58.74, 11.328571428571427);
+\draw[gridline] (1.5, 12.2) -- (58.74, 12.2);
+\draw[gridline] (1.5, 13.07142857142857) -- (58.74, 13.07142857142857);
+\draw[gridline] (1.5, 13.942857142857141) -- (58.74, 13.942857142857141);
+\draw[gridline] (1.5, 14.814285714285713) -- (58.74, 14.814285714285713);
+\draw[gridline] (1.5, 15.685714285714283) -- (58.74, 15.685714285714283);
+\draw[gridline] (1.5, 16.557142857142857) -- (58.74, 16.557142857142857);
+\draw[gridline] (1.5, 17.428571428571427) -- (58.74, 17.428571428571427);
+\draw[gridline] (1.5, 18.299999999999997) -- (58.74, 18.299999999999997);
+\draw[gridline] (1.5, 19.17142857142857) -- (58.74, 19.17142857142857);
+\draw[gridline] (1.5, 20.04285714285714) -- (58.74, 20.04285714285714);
+\draw[gridline] (1.5, 20.91428571428571) -- (58.74, 20.91428571428571);
+\draw[gridline] (1.5, 21.785714285714285) -- (58.74, 21.785714285714285);
+\draw[gridline] (1.5, 22.657142857142855) -- (58.74, 22.657142857142855);
+\draw[gridline] (1.5, 23.528571428571425) -- (58.74, 23.528571428571425);
+\draw[gridline] (1.5, 24.4) -- (58.74, 24.4);
+\fill[cArr] (1.5, 0.0) rectangle (12.604560000000001, 1.6121428571428569);
+\draw[eventbox] (1.5, 0.0) -- (12.604560000000001, 0.0);
+\draw[eventbox] (1.5, 1.6121428571428569) -- (12.604560000000001, 1.6121428571428569);
+\draw[eventbox] (1.5, 0.0) -- (1.5, 1.6121428571428569);
+\draw[eventbox] (12.604560000000001, 0.0) -- (12.604560000000001, 1.6121428571428569);
+\fill[cWelc] (1.5, 1.7428571428571427) rectangle (12.604560000000001, 5.097857142857142);
+\draw[eventbox] (1.5, 1.7428571428571427) -- (12.604560000000001, 1.7428571428571427);
+\draw[eventbox] (1.5, 5.097857142857142) -- (12.604560000000001, 5.097857142857142);
+\draw[eventbox] (1.5, 1.7428571428571427) -- (1.5, 5.097857142857142);
+\draw[eventbox] (12.604560000000001, 1.7428571428571427) -- (12.604560000000001, 5.097857142857142);
+\fill[cWork] (1.5, 6.1) rectangle (12.604560000000001, 12.069285714285714);
+\draw[eventbox] (1.5, 6.1) -- (12.604560000000001, 6.1);
+\draw[eventbox] (1.5, 12.069285714285714) -- (12.604560000000001, 12.069285714285714);
+\draw[eventbox] (1.5, 6.1) -- (1.5, 12.069285714285714);
+\draw[eventbox] (12.604560000000001, 6.1) -- (12.604560000000001, 12.069285714285714);
+\fill[cLunch] (1.5, 12.2) rectangle (12.604560000000001, 13.07142857142857);
+\draw[eventbox] (1.5, 12.2) -- (12.604560000000001, 12.2);
+\draw[eventbox] (1.5, 12.2) -- (1.5, 13.07142857142857);
+\draw[eventbox] (12.604560000000001, 12.2) -- (12.604560000000001, 13.07142857142857);
+\fill[cLunch] (1.5, 13.07142857142857) rectangle (12.604560000000001, 15.554999999999998);
+\draw[eventbox] (1.5, 15.554999999999998) -- (12.604560000000001, 15.554999999999998);
+\draw[eventbox] (1.5, 13.07142857142857) -- (1.5, 15.554999999999998);
+\fill[cLunch] (12.604560000000001, 13.07142857142857) rectangle (12.948, 15.554999999999998);
+\draw[eventbox] (12.604560000000001, 13.07142857142857) -- (12.948, 13.07142857142857);
+\draw[eventbox] (12.604560000000001, 15.554999999999998) -- (12.948, 15.554999999999998);
+\fill[cWork] (1.5, 15.685714285714283) rectangle (12.604560000000001, 22.526428571428568);
+\draw[eventbox] (1.5, 15.685714285714283) -- (12.604560000000001, 15.685714285714283);
+\draw[eventbox] (1.5, 22.526428571428568) -- (12.604560000000001, 22.526428571428568);
+\draw[eventbox] (1.5, 15.685714285714283) -- (1.5, 22.526428571428568);
+\draw[eventbox] (12.604560000000001, 15.685714285714283) -- (12.604560000000001, 22.526428571428568);
+\fill[cLeis] (1.5, 22.657142857142855) rectangle (12.604560000000001, 24.530714285714286);
+\draw[eventbox] (1.5, 22.657142857142855) -- (12.604560000000001, 22.657142857142855);
+\draw[eventbox] (1.5, 22.657142857142855) -- (1.5, 24.530714285714286);
+\fill[cLeis] (12.604560000000001, 22.657142857142855) rectangle (12.948, 24.530714285714286);
+\draw[eventbox] (12.604560000000001, 22.657142857142855) -- (12.948, 22.657142857142855);
+\fill[cArr] (12.948, 0.0) rectangle (24.05256, 1.6121428571428569);
+\draw[eventbox] (12.948, 0.0) -- (24.05256, 0.0);
+\draw[eventbox] (12.948, 1.6121428571428569) -- (24.05256, 1.6121428571428569);
+\draw[eventbox] (12.948, 0.0) -- (12.948, 1.6121428571428569);
+\draw[eventbox] (24.05256, 0.0) -- (24.05256, 1.6121428571428569);
+\fill[cLect] (12.948, 1.7428571428571427) rectangle (24.05256, 6.840714285714285);
+\draw[eventbox] (12.948, 1.7428571428571427) -- (24.05256, 1.7428571428571427);
+\draw[eventbox] (12.948, 6.840714285714285) -- (24.05256, 6.840714285714285);
+\draw[eventbox] (12.948, 1.7428571428571427) -- (12.948, 6.840714285714285);
+\draw[eventbox] (24.05256, 1.7428571428571427) -- (24.05256, 6.840714285714285);
+\fill[cWork] (12.948, 7.842857142857142) rectangle (24.05256, 12.940714285714284);
+\draw[eventbox] (12.948, 7.842857142857142) -- (24.05256, 7.842857142857142);
+\draw[eventbox] (12.948, 12.940714285714284) -- (24.05256, 12.940714285714284);
+\draw[eventbox] (12.948, 7.842857142857142) -- (12.948, 12.940714285714284);
+\draw[eventbox] (24.05256, 7.842857142857142) -- (24.05256, 12.940714285714284);
+\fill[cLunch] (12.948, 13.07142857142857) rectangle (24.05256, 15.685714285714283);
+\draw[eventbox] (12.948, 13.07142857142857) -- (24.05256, 13.07142857142857);
+\fill[cLunch] (24.05256, 13.07142857142857) rectangle (24.396, 15.685714285714283);
+\draw[eventbox] (24.05256, 13.07142857142857) -- (24.396, 13.07142857142857);
+\draw[eventbox] (12.948, 15.554999999999998) -- (12.948, 15.685714285714283);
+\fill[cLunch] (12.948, 15.685714285714283) rectangle (24.05256, 16.42642857142857);
+\draw[eventbox] (12.948, 16.42642857142857) -- (24.05256, 16.42642857142857);
+\draw[eventbox] (12.948, 15.685714285714283) -- (12.948, 16.42642857142857);
+\fill[cLunch] (24.05256, 15.685714285714283) rectangle (24.396, 16.42642857142857);
+\draw[eventbox] (24.05256, 16.42642857142857) -- (24.396, 16.42642857142857);
+\fill[cWork] (12.948, 16.557142857142857) rectangle (24.05256, 22.526428571428568);
+\draw[eventbox] (12.948, 16.557142857142857) -- (24.05256, 16.557142857142857);
+\draw[eventbox] (12.948, 22.526428571428568) -- (24.05256, 22.526428571428568);
+\draw[eventbox] (12.948, 16.557142857142857) -- (12.948, 22.526428571428568);
+\draw[eventbox] (24.05256, 16.557142857142857) -- (24.05256, 22.526428571428568);
+\fill[cLeis] (12.948, 22.657142857142855) rectangle (24.05256, 24.530714285714286);
+\draw[eventbox] (12.948, 22.657142857142855) -- (24.05256, 22.657142857142855);
+\fill[cLeis] (24.05256, 22.657142857142855) rectangle (24.396, 24.530714285714286);
+\draw[eventbox] (24.05256, 22.657142857142855) -- (24.396, 22.657142857142855);
+\fill[cArr] (24.396, 0.0) rectangle (35.50056, 1.6121428571428569);
+\draw[eventbox] (24.396, 0.0) -- (35.50056, 0.0);
+\draw[eventbox] (24.396, 1.6121428571428569) -- (35.50056, 1.6121428571428569);
+\draw[eventbox] (24.396, 0.0) -- (24.396, 1.6121428571428569);
+\draw[eventbox] (35.50056, 0.0) -- (35.50056, 1.6121428571428569);
+\fill[cLect] (24.396, 1.7428571428571427) rectangle (35.50056, 6.840714285714285);
+\draw[eventbox] (24.396, 1.7428571428571427) -- (35.50056, 1.7428571428571427);
+\draw[eventbox] (24.396, 6.840714285714285) -- (35.50056, 6.840714285714285);
+\draw[eventbox] (24.396, 1.7428571428571427) -- (24.396, 6.840714285714285);
+\draw[eventbox] (35.50056, 1.7428571428571427) -- (35.50056, 6.840714285714285);
+\fill[cWork] (24.396, 7.842857142857142) rectangle (35.50056, 12.940714285714284);
+\draw[eventbox] (24.396, 7.842857142857142) -- (35.50056, 7.842857142857142);
+\draw[eventbox] (24.396, 12.940714285714284) -- (35.50056, 12.940714285714284);
+\draw[eventbox] (24.396, 7.842857142857142) -- (24.396, 12.940714285714284);
+\draw[eventbox] (35.50056, 7.842857142857142) -- (35.50056, 12.940714285714284);
+\fill[cLunch] (24.396, 13.07142857142857) rectangle (35.50056, 13.942857142857141);
+\draw[eventbox] (24.396, 13.07142857142857) -- (35.50056, 13.07142857142857);
+\fill[cLunch] (35.50056, 13.07142857142857) rectangle (35.844, 13.812142857142856);
+\draw[eventbox] (35.50056, 13.07142857142857) -- (35.844, 13.07142857142857);
+\draw[eventbox] (35.50056, 13.812142857142856) -- (35.844, 13.812142857142856);
+\draw[eventbox] (35.50056, 13.812142857142856) -- (35.50056, 13.942857142857141);
+\fill[cLunch] (24.396, 13.942857142857141) rectangle (35.50056, 16.42642857142857);
+\draw[eventbox] (24.396, 16.42642857142857) -- (35.50056, 16.42642857142857);
+\draw[eventbox] (35.50056, 13.942857142857141) -- (35.50056, 16.42642857142857);
+\fill[cPrep] (24.396, 16.557142857142857) rectangle (35.50056, 22.526428571428568);
+\draw[eventbox] (24.396, 16.557142857142857) -- (35.50056, 16.557142857142857);
+\draw[eventbox] (24.396, 22.526428571428568) -- (35.50056, 22.526428571428568);
+\draw[eventbox] (24.396, 16.557142857142857) -- (24.396, 22.526428571428568);
+\draw[eventbox] (35.50056, 16.557142857142857) -- (35.50056, 22.526428571428568);
+\fill[cLeis] (24.396, 22.657142857142855) rectangle (35.50056, 24.530714285714286);
+\draw[eventbox] (24.396, 22.657142857142855) -- (35.50056, 22.657142857142855);
+\fill[cLeis] (35.50056, 22.657142857142855) rectangle (35.844, 24.530714285714286);
+\draw[eventbox] (35.50056, 22.657142857142855) -- (35.844, 22.657142857142855);
+\fill[cArr] (35.844, 0.0) rectangle (46.94856, 1.6121428571428569);
+\draw[eventbox] (35.844, 0.0) -- (46.94856, 0.0);
+\draw[eventbox] (35.844, 1.6121428571428569) -- (46.94856, 1.6121428571428569);
+\draw[eventbox] (35.844, 0.0) -- (35.844, 1.6121428571428569);
+\draw[eventbox] (46.94856, 0.0) -- (46.94856, 1.6121428571428569);
+\fill[cVisit] (35.844, 1.7428571428571427) rectangle (46.94856, 8.583571428571428);
+\draw[eventbox] (35.844, 1.7428571428571427) -- (46.94856, 1.7428571428571427);
+\draw[eventbox] (35.844, 8.583571428571428) -- (46.94856, 8.583571428571428);
+\draw[eventbox] (35.844, 1.7428571428571427) -- (35.844, 8.583571428571428);
+\draw[eventbox] (46.94856, 1.7428571428571427) -- (46.94856, 8.583571428571428);
+\fill[cLunch] (35.844, 10.457142857142856) rectangle (46.94856, 12.2);
+\draw[eventbox] (35.844, 10.457142857142856) -- (46.94856, 10.457142857142856);
+\draw[eventbox] (35.844, 10.457142857142856) -- (35.844, 12.2);
+\fill[cLunch] (46.94856, 10.457142857142856) rectangle (47.292, 12.069285714285714);
+\draw[eventbox] (46.94856, 10.457142857142856) -- (47.292, 10.457142857142856);
+\draw[eventbox] (46.94856, 12.069285714285714) -- (47.292, 12.069285714285714);
+\draw[eventbox] (46.94856, 12.069285714285714) -- (46.94856, 12.2);
+\fill[cLunch] (35.844, 12.2) rectangle (46.94856, 13.07142857142857);
+\draw[eventbox] (35.844, 12.2) -- (35.844, 13.07142857142857);
+\draw[eventbox] (46.94856, 12.2) -- (46.94856, 13.07142857142857);
+\fill[cLunch] (35.844, 13.07142857142857) rectangle (46.94856, 13.812142857142856);
+\draw[eventbox] (35.844, 13.812142857142856) -- (46.94856, 13.812142857142856);
+\draw[eventbox] (46.94856, 13.07142857142857) -- (46.94856, 13.812142857142856);
+\fill[cPres] (35.844, 15.685714285714283) rectangle (46.94856, 22.526428571428568);
+\draw[eventbox] (35.844, 15.685714285714283) -- (46.94856, 15.685714285714283);
+\draw[eventbox] (35.844, 22.526428571428568) -- (46.94856, 22.526428571428568);
+\draw[eventbox] (35.844, 15.685714285714283) -- (35.844, 22.526428571428568);
+\draw[eventbox] (46.94856, 15.685714285714283) -- (46.94856, 22.526428571428568);
+\fill[cLeis] (35.844, 22.657142857142855) rectangle (46.94856, 24.530714285714286);
+\draw[eventbox] (35.844, 22.657142857142855) -- (46.94856, 22.657142857142855);
+\fill[cLeis] (46.94856, 22.657142857142855) rectangle (47.292, 24.530714285714286);
+\draw[eventbox] (46.94856, 22.657142857142855) -- (47.292, 22.657142857142855);
+\fill[cArr] (47.292, 1.7428571428571427) rectangle (58.39656, 3.3549999999999995);
+\draw[eventbox] (47.292, 1.7428571428571427) -- (58.39656, 1.7428571428571427);
+\draw[eventbox] (47.292, 3.3549999999999995) -- (58.39656, 3.3549999999999995);
+\draw[eventbox] (47.292, 1.7428571428571427) -- (47.292, 3.3549999999999995);
+\draw[eventbox] (58.39656, 1.7428571428571427) -- (58.39656, 3.3549999999999995);
+\fill[cVisit] (47.292, 3.4857142857142853) rectangle (58.39656, 8.583571428571428);
+\draw[eventbox] (47.292, 3.4857142857142853) -- (58.39656, 3.4857142857142853);
+\draw[eventbox] (47.292, 8.583571428571428) -- (58.39656, 8.583571428571428);
+\draw[eventbox] (47.292, 3.4857142857142853) -- (47.292, 8.583571428571428);
+\draw[eventbox] (58.39656, 3.4857142857142853) -- (58.39656, 8.583571428571428);
+\fill[cLunch] (47.292, 8.714285714285714) rectangle (58.39656, 10.457142857142856);
+\draw[eventbox] (47.292, 8.714285714285714) -- (58.39656, 8.714285714285714);
+\draw[eventbox] (47.292, 8.714285714285714) -- (47.292, 10.457142857142856);
+\draw[eventbox] (58.39656, 8.714285714285714) -- (58.39656, 10.457142857142856);
+\fill[cLunch] (47.292, 10.457142857142856) rectangle (58.39656, 12.069285714285714);
+\draw[eventbox] (47.292, 12.069285714285714) -- (58.39656, 12.069285714285714);
+\draw[eventbox] (58.39656, 10.457142857142856) -- (58.39656, 12.069285714285714);
+\fill[cBye] (47.292, 12.2) rectangle (58.39656, 15.554999999999998);
+\draw[eventbox] (47.292, 12.2) -- (58.39656, 12.2);
+\draw[eventbox] (47.292, 15.554999999999998) -- (58.39656, 15.554999999999998);
+\draw[eventbox] (47.292, 12.2) -- (47.292, 15.554999999999998);
+\draw[eventbox] (58.39656, 12.2) -- (58.39656, 15.554999999999998);
+\fill[cLeis] (47.292, 15.685714285714283) rectangle (58.39656, 22.657142857142855);
+\draw[eventbox] (47.292, 15.685714285714283) -- (58.39656, 15.685714285714283);
+\draw[eventbox] (47.292, 15.685714285714283) -- (47.292, 22.657142857142855);
+\draw[eventbox] (58.39656, 15.685714285714283) -- (58.39656, 22.657142857142855);
+\fill[cLeis] (47.292, 22.657142857142855) rectangle (58.39656, 24.530714285714286);
+\draw[eventbox] (58.39656, 22.657142857142855) -- (58.39656, 24.530714285714286);
+\draw[timeline] (1.5, 0) -- (1.5, 24.4);
+\draw[timeline] (0, 0) -- (0, 24.4);
+\draw[timeline] (0, 0.8714285714285713) -- (1.5, 0.8714285714285713);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 0.0) {09:00};
+\draw[timeline] (0, 1.7428571428571427) -- (1.5, 1.7428571428571427);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 0.8714285714285713) {09:15};
+\draw[timeline] (0, 2.614285714285714) -- (1.5, 2.614285714285714);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 1.7428571428571427) {09:30};
+\draw[timeline] (0, 3.4857142857142853) -- (1.5, 3.4857142857142853);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 2.614285714285714) {09:45};
+\draw[timeline] (0, 4.357142857142857) -- (1.5, 4.357142857142857);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 3.4857142857142853) {10:00};
+\draw[timeline] (0, 5.228571428571428) -- (1.5, 5.228571428571428);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 4.357142857142857) {10:15};
+\draw[timeline] (0, 6.1) -- (1.5, 6.1);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 5.228571428571428) {10:30};
+\draw[timeline] (0, 6.971428571428571) -- (1.5, 6.971428571428571);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 6.1) {10:45};
+\draw[timeline] (0, 7.842857142857142) -- (1.5, 7.842857142857142);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 6.971428571428571) {11:00};
+\draw[timeline] (0, 8.714285714285714) -- (1.5, 8.714285714285714);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 7.842857142857142) {11:15};
+\draw[timeline] (0, 9.585714285714285) -- (1.5, 9.585714285714285);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 8.714285714285714) {11:30};
+\draw[timeline] (0, 10.457142857142856) -- (1.5, 10.457142857142856);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 9.585714285714285) {11:45};
+\draw[timeline] (0, 11.328571428571427) -- (1.5, 11.328571428571427);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 10.457142857142856) {12:00};
+\draw[timeline] (0, 12.2) -- (1.5, 12.2);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 11.328571428571427) {12:15};
+\draw[timeline] (0, 13.07142857142857) -- (1.5, 13.07142857142857);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 12.2) {12:30};
+\draw[timeline] (0, 13.942857142857141) -- (1.5, 13.942857142857141);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 13.07142857142857) {12:45};
+\draw[timeline] (0, 14.814285714285713) -- (1.5, 14.814285714285713);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 13.942857142857141) {13:00};
+\draw[timeline] (0, 15.685714285714283) -- (1.5, 15.685714285714283);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 14.814285714285713) {13:15};
+\draw[timeline] (0, 16.557142857142857) -- (1.5, 16.557142857142857);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 15.685714285714283) {13:30};
+\draw[timeline] (0, 17.428571428571427) -- (1.5, 17.428571428571427);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 16.557142857142857) {13:45};
+\draw[timeline] (0, 18.299999999999997) -- (1.5, 18.299999999999997);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 17.428571428571427) {14:00};
+\draw[timeline] (0, 19.17142857142857) -- (1.5, 19.17142857142857);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 18.299999999999997) {14:15};
+\draw[timeline] (0, 20.04285714285714) -- (1.5, 20.04285714285714);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 19.17142857142857) {14:30};
+\draw[timeline] (0, 20.91428571428571) -- (1.5, 20.91428571428571);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 20.04285714285714) {14:45};
+\draw[timeline] (0, 21.785714285714285) -- (1.5, 21.785714285714285);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 20.91428571428571) {15:00};
+\draw[timeline] (0, 22.657142857142855) -- (1.5, 22.657142857142855);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 21.785714285714285) {15:15};
+\draw[timeline] (0, 23.528571428571425) -- (1.5, 23.528571428571425);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 22.657142857142855) {15:30};
+\draw[timeline] (0, 24.4) -- (1.5, 24.4);
+\node[anchor=north, font=\small, yshift=-0.15cm] at (0.75, 23.528571428571425) {15:45};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (7.0522800000000005, 0.8060714285714284) {{\Large \textbf{Registration}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (18.50028, 0.8060714285714284) {{\Large \textbf{Morning Coffee}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 0.8060714285714284) {{\Large \textbf{Morning Coffee}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (41.39628, 0.8060714285714284) {{\Large \textbf{Morning Coffee}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (52.844280000000005, 2.548928571428571) {{\Large \textbf{Morning Coffee}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (7.0522800000000005, 3.4203571428571427) {{\Large \textbf{Opening Ceremony}} \\ {\small Chair: Ada Lovelace\\ Keynote: Alan Turing -- ``On Computable Numbers"}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (18.50028, 4.291785714285714) {{\Large \textbf{Session I: Algorithms}} \\ {\normalsize Donald Knuth: The Art of Programming\\ Edsger Dijkstra: Shortest Paths}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 4.291785714285714) {{\Large \textbf{Session II: Information Theory}} \\ {\normalsize Claude Shannon: A Mathematical Theory\\ Richard Hamming: Error Correcting Codes}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (41.39628, 5.163214285714285) {{\Large \textbf{Excursion: Tech Museum}} \\ {\normalsize Guided tour by Tim Berners-Lee}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (52.844280000000005, 6.034642857142857) {{\Large \textbf{Lab Tour: AI \& Robotics}} \\ {\normalsize Marvin Minsky, John McCarthy}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (7.0522800000000005, 9.084642857142857) {{\Large \textbf{Workshop: Compiler Optimization}} \\ {\normalsize Grace Hopper, John von Neumann}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (18.50028, 10.391785714285714) {{\Large \textbf{Poster Session I}} \\ {\normalsize Topics: Algorithms \& Data Structures}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 10.391785714285714) {{\Large \textbf{Poster Session II}} \\ {\normalsize Topics: Networking \& Security}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (52.844280000000005, 13.877499999999998) {{\Large \textbf{Farewell \& Awards}} \\ {\normalsize Closing Remarks}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 14.74892857142857) {{\Large \textbf{Lunch Break}} \\ {\normalsize Cafeteria}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (7.0522800000000005, 19.106071428571425) {{\Large \textbf{Workshop: Complexity Theory}} \\ {\normalsize Stephen Cook, Richard Karp}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (18.50028, 19.541785714285712) {{\Large \textbf{Group Work: Operating Systems}} \\ {\normalsize Ken Thompson, Dennis Ritchie}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 19.541785714285712) {{\Large \textbf{Hackathon Preparation}} \\ {\normalsize Margaret Hamilton, Katherine Johnson}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (41.39628, 19.106071428571425) {{\Large \textbf{Hackathon Presentations}} \\ {\normalsize Jury: Linus Torvalds, Guido van Rossum}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.94828, 23.59392857142857) {{\Large \textbf{Networking \& Social}} \\ {\normalsize }};
+\end{tikzpicture}
+}
+}
+\end{document}
