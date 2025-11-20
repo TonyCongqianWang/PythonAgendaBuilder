@@ -1,4 +1,11 @@
 # PythonAgendaBuilder
-Vibe coded python application to build a latex agenda. The main function outputs the [LaTeX code](example/example_tikz.tex) for the [pdf agenda](example/example_tikz.pdf) with a formatted timetable: 
+Vibe coded python module to build a latex agenda. It supports rendering either with `tikz` or with `tabular`.
 
-![Image of Example PDF](example/example_tikz.png)
+Running the example main file outputs the [LaTeX code](example/example_tikz.tex) for the [pdf](example/example_tikz.pdf) of the agenda:
+
+![Image of Example PDF with tikz rendering](example/example_tikz.png)
+
+Alternatively if one does not want to use the 'tikz' package one can use the `--legacy` option. To save the output directly to a file use `--file <filename>`.
+
+
+![Image of Example PDF with table rendering](example/example_table.png)
