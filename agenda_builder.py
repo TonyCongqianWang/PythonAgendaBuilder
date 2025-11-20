@@ -167,6 +167,172 @@ class AgendaBuilder:
                 
         return render_grid
 
+    def generate_latex_legacygrid(self, scale=0.4, width_pct=1.0, height_pct=1.2, multirow_correction_factor=3.5, text_vpos_bias=-0.0):
+        USABLE_WIDTH_CM = 26.7
+        USABLE_HEIGHT_CM = 18.0
+        
+        target_width = USABLE_WIDTH_CM * width_pct
+        target_height = USABLE_HEIGHT_CM * height_pct
+        
+        time_col_width = 1.5
+        remaining_width = target_width - time_col_width
+        col_width = remaining_width / self.num_days
+        
+        header_height = 0.8
+        remaining_height = target_height - header_height
+        if remaining_height < 1: remaining_height = 1
+        row_height_cm = remaining_height / self.num_slots
+
+        render_grid = self._create_render_grid()
+        
+        # --- Calculate Borders Locally for Legacy Grid ---
+        rows = self.num_slots
+        cols = self.num_days
+        for r in range(rows):
+            for c in range(cols):
+                cell = render_grid[r][c]
+                curr_id = cell['id']
+                
+                # Left Border
+                if c == 0: cell['border_l'] = 'THICK'
+                elif curr_id != render_grid[r][c-1]['id']: cell['border_l'] = 'THICK'
+                else: cell['border_l'] = 'THIN'
+
+                # Right Border
+                if c == cols - 1: cell['border_r'] = 'THICK'
+                elif curr_id != render_grid[r][c+1]['id']: cell['border_r'] = 'THICK'
+                else: cell['border_r'] = 'THIN'
+
+                # Bottom Border
+                if r == rows - 1: cell['border_b'] = 'THICK'
+                elif r < rows - 1 and curr_id != render_grid[r+1][c]['id']: cell['border_b'] = 'THICK'
+                else: cell['border_b'] = 'THIN'
+        
+        latex = []
+        latex.append(r"""\documentclass[a4paper, landscape]{article}
+\usepackage[left=1.5cm, right=1.5cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage{tcolorbox}
+\usepackage[table]{xcolor} 
+\usepackage{array}
+\usepackage{hhline}
+\usepackage{graphicx} 
+\usepackage{multirow}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\subtxt}[1]{{\small \itshape #1}}
+""")
+        
+        for name, spec in self.colors.items():
+            latex.append(f"\\definecolor{{{name}}}{spec}")
+            
+        latex.append(r"""
+\begin{document}
+\pagestyle{empty}
+{\Huge \textbf{""" + self._sanitize(self.title) + r"""}}
+\vspace{0.23cm}
+""")
+        
+        for ev in self.special_events:
+            latex.append(rf"\begin{{tcolorbox}}[colback={ev['color']}!30!white, colframe=black, boxrule=1.25pt, title=\textbf{{{self._sanitize(ev['date'])}}}]")
+            latex.append(rf"\textbf{{{self._sanitize(ev['time'])}}} -- {self._sanitize(ev['title'])} \subtxt{{{self._sanitize(ev['subtext'])}}}")
+            latex.append(r"\end{tcolorbox}")
+            latex.append(r"\vspace{0.13cm}")
+
+        # --- Border Definitions ---
+        V_THICK = r"!{\color{black}\vrule width 1.5pt}" 
+        V_THIN = r"!{\color{lightgray!60}\vrule width 0.8pt}" 
+        H_THICK = r">{\arrayrulecolor{black}\setlength\arrayrulewidth{1.5pt}}-"
+        H_THIN = r">{\arrayrulecolor{lightgray!60}}-" 
+        H_INTER = r">{\arrayrulecolor{black}\setlength\arrayrulewidth{1.5pt}}|"
+
+        base_col_def = f"c" + (f"m{{{col_width:.2f}cm}}" * self.num_days)
+
+        latex.append(r"\noindent\makebox[\textwidth][c]{%")
+        
+        if scale != 1.0: latex.append(rf"\scalebox{{{scale}}}{{%")
+        
+        latex.append(r"\setlength\arrayrulewidth{0.4pt}")
+        
+        latex.append(r"\renewcommand{\arraystretch}{1.1}") 
+        latex.append(f"\\begin{{tabular}}{{{base_col_def}}}")
+        
+        # Top Border
+        top_hhline = [H_INTER, H_THICK, H_INTER] 
+        for _ in range(self.num_days):
+            top_hhline.extend([H_THICK, H_INTER])
+        latex.append(r"\hhline{" + "".join(top_hhline) + "}")
+        
+        # Header
+        header_row = f"\\multicolumn{{1}}{{{V_THICK}c{V_THICK}}}{{\\textbf{{Time}}}}"
+        current_date = self.start_date
+        for i in range(self.num_days):
+            day_str = current_date.strftime("%a, %d.%m")
+            style = f"{V_THICK}c"
+            if i == self.num_days - 1: style += V_THICK
+            header_row += f" & \\multicolumn{{1}}{{{style}}}{{\\textbf{{{day_str}}}}}"
+            current_date += datetime.timedelta(days=1)
+        latex.append(header_row + r" \\")
+        latex.append(r"\hhline{" + "".join(top_hhline) + "}")
+        
+        # Rows
+        t_current = datetime.datetime.combine(datetime.date.today(), self.start_time)
+        
+        for r in range(self.num_slots):
+            time_str = t_current.strftime("%H:%M")
+            
+            row_str = f"\\multicolumn{{1}}{{{V_THICK}c{V_THICK}}}{{\\parbox[t][{row_height_cm:.3f}cm][t]{{1.4cm}}{{\\centering \\small {time_str}}}}}"
+            
+            for c in range(self.num_days):
+                cell = render_grid[r][c]
+                
+                left_style = V_THICK if cell['border_l'] == 'THICK' else V_THIN
+                right_style = V_THICK if cell['border_r'] == 'THICK' else V_THIN
+                style = f"{left_style}m{{{col_width:.2f}cm}}{right_style}"
+                
+                bg = f"\\cellcolor{{{cell['bg_color']}}}" if cell['bg_color'] else ""
+                
+                content = ""
+                if cell['text']:
+                    title_part = f"{{\\Large \\textbf{{{cell['text']['title']}}}}}"
+                    sub_part = f"{{\\small {cell['text']['subtext']}}}"
+                    text_data = f"{title_part} \\newline {sub_part}"
+                    
+                    span = cell['span']
+                    
+                    vmove = multirow_correction_factor * (abs(span) - 2) + text_vpos_bias
+                    content = rf"\multirow[t]{{{span}}}{{=}}[{vmove}ex]{{{text_data}}}"
+                
+                row_str += f" & \\multicolumn{{1}}{{{style}}}{{{bg}{content}}}"
+            
+            latex.append(row_str + r" \\")
+            
+            # HHLines
+            h_parts = [H_INTER]
+            if r == self.num_slots - 1: h_parts.append(H_THICK)
+            else: h_parts.append(H_THIN)
+            h_parts.append(H_INTER)
+            
+            for c in range(self.num_days):
+                cell = render_grid[r][c]
+                if cell['border_b'] == 'THICK': h_parts.append(H_THICK)
+                else: h_parts.append(H_THIN)
+                h_parts.append(H_INTER)
+                
+            latex.append(r"\hhline{" + "".join(h_parts) + "}")
+            t_current += self.granularity
+
+        latex.append(r"\end{tabular}")
+        if scale != 1.0: latex.append(r"}")
+        
+        # Close the makebox
+        latex.append(r"}")
+        
+        latex.append(r"\end{document}")
+        
+        return "\n".join(latex)
+
     def generate_latex_tikz(self, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2):
         USABLE_WIDTH_CM = 26.7
         USABLE_HEIGHT_CM = 18.0
