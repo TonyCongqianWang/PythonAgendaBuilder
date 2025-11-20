@@ -395,7 +395,7 @@ class AgendaBuilder:
         latex.append(r"\begin{tikzpicture}[x=1cm, y=-1cm]") 
         
         # --- 0. STRIPED BACKGROUND ---
-        grid_start_x = time_col_width
+        grid_start_x = 0 
         grid_end_x = time_col_width + self.num_days * day_col_width
 
         for r in range(0, self.num_slots, 2 * stripe_interval):
@@ -615,7 +615,7 @@ class AgendaBuilder:
             y_line = (r+1) * slot_height
             latex.append(rf"\draw[timeline] (0, {y_line}) -- ({time_col_width}, {y_line});")
 
-            latex.append(rf"\node[anchor=north, font=\small, yshift=-0.15cm] at ({time_col_width/2}, {y_top}) {{{time_str}}};")
+            latex.append(rf"\node[anchor=north, font=\small] at ({time_col_width/2}, {y_top}) {{{time_str}}};")
             t_current += self.granularity
 
         # --- 5. CONTENT / TEXT ---
