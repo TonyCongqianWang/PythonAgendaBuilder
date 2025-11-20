@@ -1,0 +1,624 @@
+import datetime
+import math
+
+class AgendaBuilder:
+    def __init__(self, start_date_str, end_date_str, start_time="08:00", end_time="18:00", granularity_minutes=15):
+        self.start_date = datetime.datetime.strptime(start_date_str, "%Y%m%d").date()
+        self.end_date = datetime.datetime.strptime(end_date_str, "%Y%m%d").date()
+        self.start_time = datetime.datetime.strptime(start_time, "%H:%M").time()
+        self.end_time = datetime.datetime.strptime(end_time, "%H:%M").time()
+        self.granularity = datetime.timedelta(minutes=granularity_minutes)
+        
+        self.num_days = (self.end_date - self.start_date).days + 1
+        
+        t_start = datetime.datetime.combine(datetime.date.today(), self.start_time)
+        t_end = datetime.datetime.combine(datetime.date.today(), self.end_time)
+        self.num_slots = int((t_end - t_start) / self.granularity)
+        
+        # Logic Grid: Stores ID and Raw Data
+        self.grid = [[None for _ in range(self.num_days)] for _ in range(self.num_slots)]
+        
+        self.colors = {}
+        self.special_events = []
+        self.title = "Weekly Agenda"
+        self.event_counter = 0
+
+    def set_title(self, title):
+        self.title = title
+
+    def define_color(self, name, r, g, b):
+        self.colors[name] = f"{{rgb}}{{{r},{g},{b}}}"
+
+    def add_special_event(self, date_str, time_str, title, subtext, color_name="colVisit"):
+        self.special_events.append({
+            'date': date_str,
+            'time': time_str,
+            'title': title,
+            'subtext': subtext,
+            'color': color_name
+        })
+
+    def _get_day_index(self, date_obj):
+        delta = (date_obj - self.start_date).days
+        if 0 <= delta < self.num_days:
+            return delta
+        return None
+
+    def _get_time_index(self, time_obj):
+        start_mins = self.start_time.hour * 60 + self.start_time.minute
+        target_mins = time_obj.hour * 60 + time_obj.minute
+        diff = target_mins - start_mins
+        if diff < 0: return None
+        # Return fractional slot index (float)
+        slot = diff / (self.granularity.seconds / 60)
+        return slot
+
+    def add_event(self, list_of_time_cells, event_color, event_title, event_subtext="", subtext_size="normalsize", open_ended=False):
+        self.event_counter += 1
+        event_id = self.event_counter
+        
+        for day, time in list_of_time_cells:
+            d_idx = self._get_day_index(day)
+            t_idx_float = self._get_time_index(time)
+
+            if d_idx is not None and t_idx_float is not None:
+                # Round down for grid storage
+                t_idx_int = int(math.floor(t_idx_float))
+                
+                if 0 <= t_idx_int < self.num_slots:
+                    self.grid[t_idx_int][d_idx] = {
+                        'id': event_id,
+                        'color': event_color,
+                        'title': event_title,
+                        'subtext': event_subtext,
+                        'subtext_size': subtext_size,
+                        'frac_start': t_idx_float, 
+                        'open_ended': open_ended
+                    }
+
+    def _sanitize(self, text):
+        if not text: return ""
+        chars = {
+            "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#",
+            "_": r"\_", "{": r"\{", "}": r"\}",
+        }
+        for char, escaped in chars.items():
+            text = text.replace(char, escaped)
+        return text
+
+    def _create_render_grid(self):
+        """
+        Generates an Intermediate Representation (IR) for rendering.
+        Only populates basic info; borders are calculated in the render loop.
+        """
+        rows = self.num_slots
+        cols = self.num_days
+        render_grid = [[{} for _ in range(cols)] for _ in range(rows)]
+        
+        # --- PASS 1: Populate Data ---
+        for r in range(rows):
+            for c in range(cols):
+                cell_data = self.grid[r][c]
+                render_grid[r][c] = {
+                    'id': cell_data['id'] if cell_data else None,
+                    'bg_color': cell_data['color'] if cell_data else None,
+                    'text': None,
+                    'frac_start': cell_data['frac_start'] if cell_data else None,
+                    'open_ended': cell_data['open_ended'] if cell_data else False,
+                    'span': 1
+                }
+
+        # --- PASS 2: Text Placement ---
+        processed_ids = set()
+        for r in range(rows):
+            for c in range(cols):
+                cell_data = self.grid[r][c]
+                if not cell_data: continue
+                eid = cell_data['id']
+                if eid in processed_ids: continue
+                
+                event_cells = []
+                for rr in range(rows):
+                    for cc in range(cols):
+                        if render_grid[rr][cc]['id'] == eid:
+                            event_cells.append((rr, cc))
+                
+                if not event_cells: continue
+                
+                all_cols = [x[1] for x in event_cells]
+                min_col = min(all_cols)
+                max_col = max(all_cols)
+                
+                center_col_float = (min_col + max_col) / 2.0
+                center_col = int(center_col_float)
+                x_offset_cols = center_col_float - center_col
+                
+                center_col_cells = [x for x in event_cells if x[1] == center_col]
+                
+                if not center_col_cells:
+                    visual_start_row = min(x[0] for x in event_cells)
+                    top_row_cols = [x[1] for x in event_cells if x[0] == visual_start_row]
+                    center_col = min(top_row_cols) + (max(top_row_cols) - min(top_row_cols)) // 2
+                    visual_start_row = min(x[0] for x in event_cells)
+                else:
+                    visual_start_row = min(x[0] for x in center_col_cells)
+
+                bottom_row = visual_start_row
+                for i in range(visual_start_row, rows):
+                    if render_grid[i][center_col]['id'] == eid:
+                        bottom_row = i
+                    else:
+                        break
+                
+                span = bottom_row - visual_start_row + 1
+                final_span = span if span == 1 else -span
+                frac_start_val = self.grid[visual_start_row][center_col]['frac_start']
+
+                render_grid[bottom_row][center_col]['text'] = {
+                    'title': self._sanitize(cell_data['title']),
+                    'subtext': self._sanitize(cell_data['subtext']),
+                    'subtext_size': cell_data.get('subtext_size', 'normalsize'),
+                    'frac_start': frac_start_val,
+                    'x_offset_cols': x_offset_cols
+                }
+                render_grid[bottom_row][center_col]['span'] = final_span
+                
+                processed_ids.add(eid)
+                
+        return render_grid
+
+    def generate_latex_tikz(self, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2):
+        USABLE_WIDTH_CM = 26.7
+        USABLE_HEIGHT_CM = 18.0
+        
+        total_width = USABLE_WIDTH_CM * width_pct
+        total_height = USABLE_HEIGHT_CM * height_pct
+        
+        time_col_width = 1.5
+        day_col_width = (total_width - time_col_width) / self.num_days
+        
+        header_height = 0.8
+        grid_height = total_height - header_height
+        slot_height = grid_height / self.num_slots
+        
+        # Gap Definitions
+        gap_x_right = day_col_width * 0.025 * 1.2
+        gap_y_bottom = slot_height * 0.075 * 2
+        
+        render_grid = self._create_render_grid()
+        
+        latex = []
+        latex.append(r"""\documentclass[a4paper, landscape]{article}
+\usepackage[left=1.5cm, right=1.5cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\subtxt}[1]{{\small \itshape #1}}
+
+% TikZ Styles
+\tikzset{
+    eventbox/.style={line width=0.8pt}, % Style for border
+    gridline/.style={draw=gray!80, line width=1.0pt},
+    timeline/.style={draw=black, line width=1.5pt},
+    stripe/.style={fill=gray!15} 
+}
+""")
+        
+        for name, spec in self.colors.items():
+            latex.append(f"\\definecolor{{{name}}}{spec}")
+            
+        latex.append(r"""
+\begin{document}
+\pagestyle{empty}
+{\Huge \textbf{""" + self._sanitize(self.title) + r"""}}
+\vspace{0.23cm}
+""")
+        
+        for ev in self.special_events:
+            latex.append(rf"\begin{{tcolorbox}}[colback={ev['color']}!30!white, colframe=black, boxrule=1.25pt, title=\textbf{{{self._sanitize(ev['date'])}}}]")
+            latex.append(rf"\textbf{{{self._sanitize(ev['time'])}}} -- {self._sanitize(ev['title'])} \subtxt{{{self._sanitize(ev['subtext'])}}}")
+            latex.append(r"\end{tcolorbox}")
+            latex.append(r"\vspace{0.13cm}")
+
+        latex.append(r"\noindent\makebox[\textwidth][c]{%")
+        if scale != 1.0: latex.append(rf"\scalebox{{{scale}}}{{%")
+        latex.append(r"\begin{tikzpicture}[x=1cm, y=-1cm]") 
+        
+        # --- 0. STRIPED BACKGROUND ---
+        grid_start_x = time_col_width
+        grid_end_x = time_col_width + self.num_days * day_col_width
+
+        for r in range(0, self.num_slots, 2 * stripe_interval):
+            stripe_start_row = r + stripe_interval
+            stripe_end_row = min(r + 2 * stripe_interval, self.num_slots)
+
+            if stripe_start_row < self.num_slots:
+                y_top = stripe_start_row * slot_height
+                y_bottom = stripe_end_row * slot_height
+                latex.append(rf"\fill[stripe] ({grid_start_x}, {y_top}) rectangle ({grid_end_x}, {y_bottom});")
+
+        # --- 1. HEADERS ---
+        latex.append(rf"\draw[timeline, fill=white] (0, {-header_height}) rectangle ({time_col_width}, 0);")
+        latex.append(rf"\node[anchor=center] at ({time_col_width/2}, {-header_height/2}) {{\textbf{{Time}}}};")
+        
+        current_date = self.start_date
+        for i in range(self.num_days):
+            x_start = time_col_width + i * day_col_width
+            x_end = x_start + day_col_width
+            day_str = current_date.strftime("%a, %d.%m")
+            latex.append(rf"\draw[timeline, fill=white] ({x_start}, {-header_height}) rectangle ({x_end}, 0);")
+            latex.append(rf"\node[anchor=center] at ({x_start + day_col_width/2}, {-header_height/2}) {{\textbf{{{day_str}}}}};")
+            current_date += datetime.timedelta(days=1)
+
+        # --- 2. GRID LINES ---
+        for c in range(self.num_days + 1):
+            x = time_col_width + c * day_col_width
+            latex.append(rf"\draw[gridline] ({x}, 0) -- ({x}, {grid_height});")
+        
+        for r in range(self.num_slots + 1):
+            y = r * slot_height
+            latex.append(rf"\draw[gridline] ({time_col_width}, {y}) -- ({time_col_width + self.num_days * day_col_width}, {y});")
+
+        # --- 3. EVENTS (Explicit Bridges with Patching) ---
+        
+        for c in range(self.num_days):
+            r = 0
+            while r < self.num_slots:
+                cell = render_grid[r][c]
+                
+                if cell['id'] is not None:
+                    start_r = r
+                    current_id = cell['id']
+                    is_open_ended = cell['open_ended']
+                    
+                    # --- CHECK NEIGHBORS AT START ---
+                    has_bridge_right = False
+                    if c < self.num_days - 1:
+                        if render_grid[start_r][c+1]['id'] == current_id:
+                            has_bridge_right = True
+
+                    has_bridge_left = False
+                    if c > 0:
+                        if render_grid[start_r][c-1]['id'] == current_id:
+                            has_bridge_left = True
+                    
+                    # --- FIND END OF STRIP ---
+                    end_r = r + 1
+                    while end_r < self.num_slots:
+                        next_cell = render_grid[end_r][c]
+                        if next_cell['id'] != current_id:
+                            break
+                        
+                        # Consistency Check Right
+                        next_has_bridge_right = False
+                        if c < self.num_days - 1 and render_grid[end_r][c+1]['id'] == current_id:
+                            next_has_bridge_right = True
+                            
+                        # Consistency Check Left
+                        next_has_bridge_left = False
+                        if c > 0 and render_grid[end_r][c-1]['id'] == current_id:
+                            next_has_bridge_left = True
+                        
+                        if next_has_bridge_right != has_bridge_right or next_has_bridge_left != has_bridge_left:
+                            break
+                            
+                        end_r += 1
+                    
+                    # Helper to check Top boundary
+                    def is_true_top(check_r, check_c):
+                        # Fix: checking < 0 for start of grid
+                        if check_r < 0: return True 
+                        if render_grid[check_r][check_c]['id'] != current_id: return True
+                        return False
+
+                    # Helper to check Bottom boundary
+                    def is_true_bottom(check_r, check_c):
+                        if check_r >= self.num_slots: return True
+                        if render_grid[check_r][check_c]['id'] != current_id: return True
+                        return False
+
+                    # Check Top Status
+                    main_is_top = is_true_top(start_r - 1, c)
+                    right_is_top = False
+                    if c < self.num_days - 1:
+                        right_is_top = is_true_top(start_r - 1, c+1)
+                    
+                    # Check Bottom Status
+                    main_is_bottom = is_true_bottom(end_r, c)
+                    
+                    right_is_bottom = False
+                    if c < self.num_days - 1:
+                        right_is_bottom = is_true_bottom(end_r, c+1)
+                        
+                    left_is_bottom = False
+                    if c > 0:
+                        left_is_bottom = is_true_bottom(end_r, c-1)
+                        
+                    # --- GEOMETRY ---
+                    frac_start_top = render_grid[start_r][c]['frac_start']
+                    y_top = frac_start_top * slot_height
+                    base_y_bottom = end_r * slot_height
+                    
+                    x_left = time_col_width + c * day_col_width
+                    x_right = x_left + day_col_width
+                    
+                    # Borders for Main Block
+                    draw_border_l = not has_bridge_left
+                    draw_border_r = not has_bridge_right
+                        
+                    # Top Border (Visual Top check)
+                    draw_border_t = main_is_top
+                    
+                    # --- CALCULATE Y2 FOR MAIN BLOCK ---
+                    if main_is_bottom:
+                        if is_open_ended:
+                            main_y2 = base_y_bottom + gap_y_bottom
+                        else:
+                            main_y2 = base_y_bottom - gap_y_bottom
+                    else:
+                        # Internal vertical split: No gap (Flush)
+                        main_y2 = base_y_bottom
+                    
+                    # --- 1. DRAW MAIN BLOCK ---
+                    main_x2 = x_right - gap_x_right
+                    
+                    latex.append(rf"\fill[{cell['bg_color']}] ({x_left}, {y_top}) rectangle ({main_x2}, {main_y2});")
+                    
+                    if draw_border_t:
+                        latex.append(rf"\draw[eventbox] ({x_left}, {y_top}) -- ({main_x2}, {y_top});")
+                    
+                    if main_is_bottom and not is_open_ended:
+                         latex.append(rf"\draw[eventbox] ({x_left}, {main_y2}) -- ({main_x2}, {main_y2});")
+                         
+                    if draw_border_l:
+                        latex.append(rf"\draw[eventbox] ({x_left}, {y_top}) -- ({x_left}, {main_y2});")
+                        
+                    if draw_border_r:
+                        latex.append(rf"\draw[eventbox] ({main_x2}, {y_top}) -- ({main_x2}, {main_y2});")
+
+                    # --- 2. DRAW EXPLICIT BRIDGE (RIGHT) ---
+                    if has_bridge_right:
+                        bridge_x1 = main_x2
+                        bridge_x2 = x_right 
+                        
+                        # Bridge Top/Bottom Logic: "If either one is, the bridge block also is"
+                        bridge_is_top = main_is_top or right_is_top
+                        bridge_is_bottom = main_is_bottom or right_is_bottom
+                        
+                        if bridge_is_bottom:
+                            if is_open_ended:
+                                bridge_y2 = base_y_bottom + gap_y_bottom
+                            else:
+                                bridge_y2 = base_y_bottom - gap_y_bottom
+                        else:
+                            bridge_y2 = base_y_bottom
+                        
+                        latex.append(rf"\fill[{cell['bg_color']}] ({bridge_x1}, {y_top}) rectangle ({bridge_x2}, {bridge_y2});")
+                        
+                        # Draw Top Border if it's a top piece
+                        if bridge_is_top:
+                            latex.append(rf"\draw[eventbox] ({bridge_x1}, {y_top}) -- ({bridge_x2}, {y_top});")
+                        
+                        # Draw Bottom Border if it's a bottom piece (unless open ended)
+                        if bridge_is_bottom and not is_open_ended:
+                            latex.append(rf"\draw[eventbox] ({bridge_x1}, {bridge_y2}) -- ({bridge_x2}, {bridge_y2});")
+                        
+                        # ** PATCH RIGHT **: Fix vertical gap if Main Block height != Bridge height
+                        # We draw a vertical line on the shared edge (main_x2)
+                        if abs(main_y2 - bridge_y2) > 0.001:
+                            patch_ymin = min(main_y2, bridge_y2)
+                            patch_ymax = max(main_y2, bridge_y2)
+                            latex.append(rf"\draw[eventbox] ({main_x2}, {patch_ymin}) -- ({main_x2}, {patch_ymax});")
+
+                    # --- 3. PATCH LEFT ---
+                    if has_bridge_left:
+                        # Left Bridge Logic: "If either one (Main c or Left c-1) is bottom..."
+                        left_bridge_is_bottom = main_is_bottom or left_is_bottom
+                        
+                        if left_bridge_is_bottom:
+                            if is_open_ended:
+                                left_bridge_y2 = base_y_bottom + gap_y_bottom
+                            else:
+                                left_bridge_y2 = base_y_bottom - gap_y_bottom
+                        else:
+                            left_bridge_y2 = base_y_bottom
+                            
+                        # If Main Block height != Left Bridge height, draw patch on x_left
+                        if abs(main_y2 - left_bridge_y2) > 0.001:
+                            patch_ymin = min(main_y2, left_bridge_y2)
+                            patch_ymax = max(main_y2, left_bridge_y2)
+                            latex.append(rf"\draw[eventbox] ({x_left}, {patch_ymin}) -- ({x_left}, {patch_ymax});")
+                            
+                    r = end_r
+                else:
+                    r += 1
+
+        # --- 4. TIME LABELS & TIME AXIS ---
+        latex.append(rf"\draw[timeline] ({time_col_width}, 0) -- ({time_col_width}, {grid_height});")
+        latex.append(rf"\draw[timeline] (0, 0) -- (0, {grid_height});")
+        
+        t_current = datetime.datetime.combine(datetime.date.today(), self.start_time)
+        for r in range(self.num_slots):
+            y_top = r * slot_height
+            time_str = t_current.strftime("%H:%M")
+            
+            y_line = (r+1) * slot_height
+            latex.append(rf"\draw[timeline] (0, {y_line}) -- ({time_col_width}, {y_line});")
+
+            latex.append(rf"\node[anchor=north, font=\small, yshift=-0.15cm] at ({time_col_width/2}, {y_top}) {{{time_str}}};")
+            t_current += self.granularity
+
+        # --- 5. CONTENT / TEXT ---
+        for r in range(self.num_slots):
+            for c in range(self.num_days):
+                cell = render_grid[r][c]
+                if cell['text']:
+                    frac_start = cell['text']['frac_start']
+                    span = cell['span']
+                    num_rows = abs(span)
+                    
+                    y_top = frac_start * slot_height
+                    base_y_bottom = (frac_start + num_rows) * slot_height
+                    
+                    is_open_ended = cell['open_ended']
+                    
+                    if is_open_ended:
+                        y_actual_bottom = base_y_bottom + gap_y_bottom
+                    else:
+                        y_actual_bottom = base_y_bottom - gap_y_bottom
+                        
+                    y_center = (y_top + y_actual_bottom) / 2
+                    
+                    x_left = time_col_width + c * day_col_width
+                    x_center = x_left + day_col_width / 2
+                    
+                    offset_cols = cell['text'].get('x_offset_cols', 0.0)
+                    x_center += offset_cols * day_col_width
+                    x_center -= gap_x_right / 2
+                    
+                    title_part = f"{{\\Large \\textbf{{{cell['text']['title']}}}}}"
+                    sz = cell['text'].get('subtext_size', 'normalsize')
+                    sub_part = f"{{\\{sz} {cell['text']['subtext']}}}"
+                    text_data = f"{title_part} \\\\ {sub_part}" 
+                    
+                    txt_w = day_col_width - 0.2 
+                    latex.append(rf"\node[anchor=center, align=center, text width={txt_w}cm] at ({x_center}, {y_center}) {{{text_data}}};")
+
+        latex.append(r"\end{tikzpicture}")
+        if scale != 1.0: latex.append(r"}")
+        latex.append(r"}")
+        latex.append(r"\end{document}")
+        
+        return "\n".join(latex)
+
+# --- Utility Functions ---
+def day_range(start_date_obj, start_day_str, end_day_str):
+    days_map = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
+    target_start = days_map.get(start_day_str)
+    target_end = days_map.get(end_day_str)
+    if target_start is None or target_end is None: raise ValueError("Invalid day string.")
+    res = []
+    for i in range(7):
+        d = start_date_obj + datetime.timedelta(days=i)
+        w = d.weekday()
+        if target_start <= target_end:
+            if target_start <= w <= target_end: res.append(d)
+        else:
+            if w >= target_start or w <= target_end: res.append(d)
+    return res
+
+def time_range(start_time_str, end_time_str, granularity_mins=15):
+    s = datetime.datetime.strptime(start_time_str, "%H:%M")
+    e = datetime.datetime.strptime(end_time_str, "%H:%M")
+    res = []
+    curr = s
+    while curr < e:
+        res.append(curr.time())
+        curr += datetime.timedelta(minutes=granularity_mins)
+    return res
+
+# --- MAIN EXECUTION ---
+if __name__ == "__main__":
+    # 1. Setup
+    agenda = AgendaBuilder(
+        start_date_str="20251201", end_date_str="20251205", 
+        start_time="09:00", end_time="16:00", granularity_minutes=15
+    )
+    agenda.set_title("My Winter School 2025")
+    
+    # 2. Colors 
+    agenda.define_color("cArr", 0.9, 0.96, 0.9)
+    agenda.define_color("cWelc", 0.7, 0.9, 0.7)
+    agenda.define_color("cBye", 0.6, 0.8, 0.6)
+    agenda.define_color("cLect", 0.75, 0.95, 0.95) 
+    agenda.define_color("cWork", 1.0, 0.95, 0.8)
+    agenda.define_color("cPrep", 1.0, 0.85, 0.65)
+    agenda.define_color("cPres", 1.0, 0.7, 0.7)
+    agenda.define_color("cLunch", 0.85, 0.9, 0.95)
+    agenda.define_color("cLeis", 0.75, 0.85, 1.0)
+    agenda.define_color("cVisit", 0.9, 0.85, 1.0)
+    agenda.define_color("cSpec", 1.0, 0.8, 0.8)
+
+    base = agenda.start_date
+    d_mon = base
+    d_tue = base + datetime.timedelta(days=1)
+    d_wed = base + datetime.timedelta(days=2)
+    d_thu = base + datetime.timedelta(days=3)
+    d_fri = base + datetime.timedelta(days=4)
+    
+    # 3. Special Events
+    agenda.add_special_event("Saturday, November 29, 2025", "19:00", "Welcome Dinner", 
+                             "Historic City Center Restaurant", "cSpec")
+
+    # 4. Monday
+    agenda.add_event([(d_mon, t) for t in time_range("09:00", "09:30")], "cArr", "Registration")
+    
+    agenda.add_event([(d_mon, t) for t in time_range("09:30", "10:30")], "cWelc", "Opening Ceremony", 
+                     "Chair: Ada Lovelace\\\\ Keynote: Alan Turing -- ``On Computable Numbers\"", 
+                     subtext_size="small")
+    
+    agenda.add_event([(d_mon, t) for t in time_range("10:45", "12:30")], "cWork", "Workshop: Compiler Optimization", 
+                     "Grace Hopper, John von Neumann")
+    agenda.add_event([(d_mon, t) for t in time_range("13:30", "15:30")], "cWork", "Workshop: Complexity Theory", 
+                     "Stephen Cook, Richard Karp")
+
+    # 5. Tuesday
+    agenda.add_event([(d_tue, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
+    agenda.add_event([(d_tue, t) for t in time_range("09:30", "11:00")], "cLect", "Session I: Algorithms", 
+                     "Donald Knuth: The Art of Programming\\\\ Edsger Dijkstra: Shortest Paths")
+    agenda.add_event([(d_tue, t) for t in time_range("11:15", "12:45")], "cWork", "Poster Session I", 
+                     "Topics: Algorithms & Data Structures")
+    agenda.add_event([(d_tue, t) for t in time_range("13:45", "15:30")], "cWork", "Group Work: Operating Systems", 
+                     "Ken Thompson, Dennis Ritchie")
+
+    # 6. Wednesday
+    agenda.add_event([(d_wed, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
+    agenda.add_event([(d_wed, t) for t in time_range("09:30", "11:00")], "cLect", "Session II: Information Theory", 
+                     "Claude Shannon: A Mathematical Theory\\\\ Richard Hamming: Error Correcting Codes")
+    agenda.add_event([(d_wed, t) for t in time_range("11:15", "12:45")], "cWork", "Poster Session II", 
+                     "Topics: Networking & Security")
+    
+    agenda.add_event([(d_wed, t) for t in time_range("13:45", "15:30")], "cPrep", "Hackathon Preparation", 
+                     "Margaret Hamilton, Katherine Johnson")
+
+    # 7. Thursday
+    agenda.add_event([(d_thu, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
+    agenda.add_event([(d_thu, t) for t in time_range("09:30", "11:30")], "cVisit", "Excursion: Tech Museum", 
+                     "Guided tour by Tim Berners-Lee")
+    
+    agenda.add_event([(d_thu, t) for t in time_range("13:30", "15:30")], "cPres", "Hackathon Presentations", 
+                     "Jury: Linus Torvalds, Guido van Rossum")
+
+    # MERGED LUNCH (Mon - Fri)
+    lunch_times = []
+    lunch_times.extend([(d_mon, t) for t in time_range("12:30", "13:30")])
+    lunch_times.extend([(d_tue, t) for t in time_range("12:45", "13:45")])
+    lunch_times.extend([(d_wed, t) for t in time_range("12:45", "13:45")])
+    lunch_times.extend([(d_thu, t) for t in time_range("12:00", "13:00")]) 
+    lunch_times.extend([(d_fri, t) for t in time_range("11:30", "12:30")])
+    
+    agenda.add_event(lunch_times, "cLunch", "Lunch Break", "Cafeteria")
+
+    # 8. Friday
+    agenda.add_event([(d_fri, t) for t in time_range("09:30", "10:00")], "cArr", "Morning Coffee")
+    agenda.add_event([(d_fri, t) for t in time_range("10:00", "11:30")], "cVisit", "Lab Tour: AI & Robotics", 
+                     "Marvin Minsky, John McCarthy")
+    agenda.add_event([(d_fri, t) for t in time_range("12:30", "13:30")], "cBye", "Farewell & Awards", "Closing Remarks")
+
+    # 9. Leisure (Open Ended)
+    leisure_times = []
+    leisure_times.extend([(d_mon, t) for t in time_range("15:30", "16:00")])
+    leisure_times.extend([(d_tue, t) for t in time_range("15:30", "16:00")])
+    leisure_times.extend([(d_wed, t) for t in time_range("15:30", "16:00")])
+    leisure_times.extend([(d_thu, t) for t in time_range("15:30", "16:00")])
+    leisure_times.extend([(d_fri, t) for t in time_range("13:30", "16:00")])
+
+    agenda.add_event(leisure_times, "cLeis", "Networking & Social", open_ended=True)
+
+    # Use TIKZ for rendering with increased scale
+    latex_code = agenda.generate_latex_tikz(scale=0.48, width_pct=2.2, height_pct=1.4)
+    print(latex_code)
