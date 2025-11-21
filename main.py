@@ -108,14 +108,12 @@ agenda.add_event([(d_fri, t) for t in time_range("10:00", "11:30")], "cVisit", "
 agenda.add_event([(d_fri, t) for t in time_range("12:30", "13:30")], "cBye", "Farewell & Awards", "Closing Remarks")
 
 # 9. Leisure (Open Ended)
-leisure_times = []
-leisure_times.extend([(d_mon, t) for t in time_range("15:30", "16:00")])
-leisure_times.extend([(d_tue, t) for t in time_range("15:30", "16:00")])
-leisure_times.extend([(d_wed, t) for t in time_range("15:30", "16:00")])
-leisure_times.extend([(d_thu, t) for t in time_range("15:30", "16:00")])
-leisure_times.extend([(d_fri, t) for t in time_range("13:30", "16:00")])
-
-agenda.add_event(leisure_times, "cLeis", "Networking & Social", open_ended=True)    
+leisure_event = agenda.add_event([], "cLeis", "Networking & Social", open_ended=True)
+agenda.extend_event(leisure_event, [(d_mon, t) for t in time_range("15:30", "16:00")])
+agenda.extend_event(leisure_event, [(d_tue, t) for t in time_range("15:30", "16:00")])
+agenda.extend_event(leisure_event, [(d_wed, t) for t in time_range("15:30", "16:00")])
+agenda.extend_event(leisure_event, [(d_thu, t) for t in time_range("15:30", "16:00")])
+agenda.extend_event(leisure_event, [(d_fri, t) for t in time_range("13:30", "16:00")])
 
 if not use_legacy_render:
     latex_code = agenda.generate_latex_tikz(scale=0.48, width_pct=2.2, height_pct=1.4, gap_x_pct=0.05, gap_y_pct=0.0, ext_y_pct=0.3)

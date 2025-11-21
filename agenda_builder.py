@@ -17,6 +17,7 @@ class AgendaBuilder:
         
         # Logic Grid: Stores ID and Raw Data
         self.grid = [[None for _ in range(self.num_days)] for _ in range(self.num_slots)]
+        self.events = {}
         
         self.colors = {}
         self.special_events = []
@@ -57,23 +58,44 @@ class AgendaBuilder:
         self.event_counter += 1
         event_id = self.event_counter
         
+        event_dict = {
+                        'color': event_color,
+                        'title': event_title,
+                        'subtext': event_subtext,
+                        'subtext_size': subtext_size,
+                        'open_ended': open_ended
+                    }
+        
+        self.events[event_id] = event_dict
+        
         for day, time in list_of_time_cells:
             d_idx = self._get_day_index(day)
             t_idx_float = self._get_time_index(time)
 
             if d_idx is not None and t_idx_float is not None:
-                # Round down for grid storage
                 t_idx_int = int(math.floor(t_idx_float))
                 
                 if 0 <= t_idx_int < self.num_slots:
                     self.grid[t_idx_int][d_idx] = {
                         'id': event_id,
-                        'color': event_color,
-                        'title': event_title,
-                        'subtext': event_subtext,
-                        'subtext_size': subtext_size,
                         'frac_start': t_idx_float, 
-                        'open_ended': open_ended
+                    }
+        return event_id
+    
+    def extend_event(self, event_id, list_of_time_cells):
+        if event_id not in self.events:
+            raise ValueError(f"Event ID {event_id} does not exist.")
+        for day, time in list_of_time_cells:
+            d_idx = self._get_day_index(day)
+            t_idx_float = self._get_time_index(time)
+
+            if d_idx is not None and t_idx_float is not None:
+                t_idx_int = int(math.floor(t_idx_float))
+                
+                if 0 <= t_idx_int < self.num_slots:
+                    self.grid[t_idx_int][d_idx] = {
+                        'id': event_id,
+                        'frac_start': t_idx_float, 
                     }
 
     def _sanitize(self, text):
@@ -99,6 +121,12 @@ class AgendaBuilder:
         for r in range(rows):
             for c in range(cols):
                 cell_data = self.grid[r][c]
+                if cell_data is not None:
+                    event_data = self.events.get(cell_data['id'])
+                    cell_data = {
+                        **cell_data,
+                        **event_data,
+                    }
                 render_grid[r][c] = {
                     'id': cell_data['id'] if cell_data else None,
                     'bg_color': cell_data['color'] if cell_data else None,
@@ -117,6 +145,11 @@ class AgendaBuilder:
                 eid = cell_data['id']
                 if eid in processed_ids: continue
                 
+                event_data = self.events.get(eid)  
+                cell_data = {
+                    **cell_data,
+                    **event_data,
+                }
                 event_cells = []
                 for rr in range(rows):
                     for cc in range(cols):
