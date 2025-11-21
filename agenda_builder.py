@@ -333,7 +333,7 @@ class AgendaBuilder:
         
         return "\n".join(latex)
 
-    def generate_latex_tikz(self, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2):
+    def generate_latex_tikz(self, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2, gap_x_pct=0.03, gap_y_pct=0.0, ext_y_pct=0.15):
         USABLE_WIDTH_CM = 26.7
         USABLE_HEIGHT_CM = 18.0
         
@@ -348,8 +348,9 @@ class AgendaBuilder:
         slot_height = grid_height / self.num_slots
         
         # Gap Definitions
-        gap_x_right = day_col_width * 0.025 * 1.2
-        gap_y_bottom = slot_height * 0.075 * 2
+        gap_x_right = day_col_width * gap_x_pct
+        gap_y_bottom = slot_height * gap_y_pct
+        ext_y_bottom = slot_height * ext_y_pct
         
         render_grid = self._create_render_grid()
         
@@ -522,7 +523,7 @@ class AgendaBuilder:
                     # --- CALCULATE Y2 FOR MAIN BLOCK ---
                     if main_is_bottom:
                         if is_open_ended:
-                            main_y2 = base_y_bottom + gap_y_bottom
+                            main_y2 = base_y_bottom + ext_y_bottom
                         else:
                             main_y2 = base_y_bottom - gap_y_bottom
                     else:
@@ -557,7 +558,7 @@ class AgendaBuilder:
                         
                         if bridge_is_bottom:
                             if is_open_ended:
-                                bridge_y2 = base_y_bottom + gap_y_bottom
+                                bridge_y2 = base_y_bottom + ext_y_bottom
                             else:
                                 bridge_y2 = base_y_bottom - gap_y_bottom
                         else:
@@ -587,7 +588,7 @@ class AgendaBuilder:
                         
                         if left_bridge_is_bottom:
                             if is_open_ended:
-                                left_bridge_y2 = base_y_bottom + gap_y_bottom
+                                left_bridge_y2 = base_y_bottom + ext_y_bottom
                             else:
                                 left_bridge_y2 = base_y_bottom - gap_y_bottom
                         else:
@@ -633,7 +634,7 @@ class AgendaBuilder:
                     is_open_ended = cell['open_ended']
                     
                     if is_open_ended:
-                        y_actual_bottom = base_y_bottom + gap_y_bottom
+                        y_actual_bottom = base_y_bottom + ext_y_bottom
                     else:
                         y_actual_bottom = base_y_bottom - gap_y_bottom
                         
@@ -686,105 +687,3 @@ def time_range(start_time_str, end_time_str, granularity_mins=15):
         res.append(curr.time())
         curr += datetime.timedelta(minutes=granularity_mins)
     return res
-
-# --- MAIN EXECUTION ---
-if __name__ == "__main__":
-    # 1. Setup
-    agenda = AgendaBuilder(
-        start_date_str="20251201", end_date_str="20251205", 
-        start_time="09:00", end_time="16:00", granularity_minutes=15
-    )
-    agenda.set_title("My Winter School 2025")
-    
-    # 2. Colors 
-    agenda.define_color("cArr", 0.9, 0.96, 0.9)
-    agenda.define_color("cWelc", 0.7, 0.9, 0.7)
-    agenda.define_color("cBye", 0.6, 0.8, 0.6)
-    agenda.define_color("cLect", 0.75, 0.95, 0.95) 
-    agenda.define_color("cWork", 1.0, 0.95, 0.8)
-    agenda.define_color("cPrep", 1.0, 0.85, 0.65)
-    agenda.define_color("cPres", 1.0, 0.7, 0.7)
-    agenda.define_color("cLunch", 0.85, 0.9, 0.95)
-    agenda.define_color("cLeis", 0.75, 0.85, 1.0)
-    agenda.define_color("cVisit", 0.9, 0.85, 1.0)
-    agenda.define_color("cSpec", 1.0, 0.8, 0.8)
-
-    base = agenda.start_date
-    d_mon = base
-    d_tue = base + datetime.timedelta(days=1)
-    d_wed = base + datetime.timedelta(days=2)
-    d_thu = base + datetime.timedelta(days=3)
-    d_fri = base + datetime.timedelta(days=4)
-    
-    # 3. Special Events
-    agenda.add_special_event("Saturday, November 29, 2025", "19:00", "Welcome Dinner", 
-                             "Historic City Center Restaurant", "cSpec")
-
-    # 4. Monday
-    agenda.add_event([(d_mon, t) for t in time_range("09:00", "09:30")], "cArr", "Registration")
-    
-    agenda.add_event([(d_mon, t) for t in time_range("09:30", "10:30")], "cWelc", "Opening Ceremony", 
-                     "Chair: Ada Lovelace\\\\ Keynote: Alan Turing -- ``On Computable Numbers\"", 
-                     subtext_size="small")
-    
-    agenda.add_event([(d_mon, t) for t in time_range("10:45", "12:30")], "cWork", "Workshop: Compiler Optimization", 
-                     "Grace Hopper, John von Neumann")
-    agenda.add_event([(d_mon, t) for t in time_range("13:30", "15:30")], "cWork", "Workshop: Complexity Theory", 
-                     "Stephen Cook, Richard Karp")
-
-    # 5. Tuesday
-    agenda.add_event([(d_tue, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
-    agenda.add_event([(d_tue, t) for t in time_range("09:30", "11:00")], "cLect", "Session I: Algorithms", 
-                     "Donald Knuth: The Art of Programming\\\\ Edsger Dijkstra: Shortest Paths")
-    agenda.add_event([(d_tue, t) for t in time_range("11:15", "12:45")], "cWork", "Poster Session I", 
-                     "Topics: Algorithms & Data Structures")
-    agenda.add_event([(d_tue, t) for t in time_range("13:45", "15:30")], "cWork", "Group Work: Operating Systems", 
-                     "Ken Thompson, Dennis Ritchie")
-
-    # 6. Wednesday
-    agenda.add_event([(d_wed, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
-    agenda.add_event([(d_wed, t) for t in time_range("09:30", "11:00")], "cLect", "Session II: Information Theory", 
-                     "Claude Shannon: A Mathematical Theory\\\\ Richard Hamming: Error Correcting Codes")
-    agenda.add_event([(d_wed, t) for t in time_range("11:15", "12:45")], "cWork", "Poster Session II", 
-                     "Topics: Networking & Security")
-    
-    agenda.add_event([(d_wed, t) for t in time_range("13:45", "15:30")], "cPrep", "Hackathon Preparation", 
-                     "Margaret Hamilton, Katherine Johnson")
-
-    # 7. Thursday
-    agenda.add_event([(d_thu, t) for t in time_range("09:00", "09:30")], "cArr", "Morning Coffee")
-    agenda.add_event([(d_thu, t) for t in time_range("09:30", "11:30")], "cVisit", "Excursion: Tech Museum", 
-                     "Guided tour by Tim Berners-Lee")
-    
-    agenda.add_event([(d_thu, t) for t in time_range("13:30", "15:30")], "cPres", "Hackathon Presentations", 
-                     "Jury: Linus Torvalds, Guido van Rossum")
-
-    # MERGED LUNCH (Mon - Fri)
-    lunch_times = []
-    lunch_times.extend([(d_mon, t) for t in time_range("12:30", "13:30")])
-    lunch_times.extend([(d_tue, t) for t in time_range("12:45", "13:45")])
-    lunch_times.extend([(d_wed, t) for t in time_range("12:45", "13:45")])
-    lunch_times.extend([(d_thu, t) for t in time_range("12:00", "13:00")]) 
-    lunch_times.extend([(d_fri, t) for t in time_range("11:30", "12:30")])
-    
-    agenda.add_event(lunch_times, "cLunch", "Lunch Break", "Cafeteria")
-
-    # 8. Friday
-    agenda.add_event([(d_fri, t) for t in time_range("09:30", "10:00")], "cArr", "Morning Coffee")
-    agenda.add_event([(d_fri, t) for t in time_range("10:00", "11:30")], "cVisit", "Lab Tour: AI & Robotics", 
-                     "Marvin Minsky, John McCarthy")
-    agenda.add_event([(d_fri, t) for t in time_range("12:30", "13:30")], "cBye", "Farewell & Awards", "Closing Remarks")
-
-    # 9. Leisure (Open Ended)
-    leisure_times = []
-    leisure_times.extend([(d_mon, t) for t in time_range("15:30", "16:00")])
-    leisure_times.extend([(d_tue, t) for t in time_range("15:30", "16:00")])
-    leisure_times.extend([(d_wed, t) for t in time_range("15:30", "16:00")])
-    leisure_times.extend([(d_thu, t) for t in time_range("15:30", "16:00")])
-    leisure_times.extend([(d_fri, t) for t in time_range("13:30", "16:00")])
-
-    agenda.add_event(leisure_times, "cLeis", "Networking & Social", open_ended=True)
-
-    # Use TIKZ for rendering with increased scale
-    latex_code = agenda.generate_latex_tikz(scale=0.48, width_pct=2.2, height_pct=1.4)
-    print(latex_code)

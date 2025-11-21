@@ -118,7 +118,7 @@ leisure_times.extend([(d_fri, t) for t in time_range("13:30", "16:00")])
 agenda.add_event(leisure_times, "cLeis", "Networking & Social", open_ended=True)    
 
 if not use_legacy_render:
-    latex_code = agenda.generate_latex_tikz(scale=0.48, width_pct=2.2, height_pct=1.4)
+    latex_code = agenda.generate_latex_tikz(scale=0.48, width_pct=2.2, height_pct=1.4, gap_x_pct=0.05, gap_y_pct=0.0, ext_y_pct=0.3)
 else:
     latex_code = agenda.generate_latex_legacygrid(scale=0.48, width_pct=2.2, height_pct=1.4, multirow_correction_factor=3.5)
 
