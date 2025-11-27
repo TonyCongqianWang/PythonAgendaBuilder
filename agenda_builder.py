@@ -2,7 +2,7 @@ import datetime
 import math
 
 class AgendaBuilder:
-    def __init__(self, start_date_str, end_date_str, start_time="08:00", end_time="18:00", granularity_minutes=15):
+    def __init__(self, start_date_str=None, end_date_str=None, start_time=None, end_time=None, granularity_minutes=15):
         self.start_date = datetime.datetime.strptime(start_date_str, "%Y%m%d").date()
         self.end_date = datetime.datetime.strptime(end_date_str, "%Y%m%d").date()
         self.start_time = datetime.datetime.strptime(start_time, "%H:%M").time()
@@ -17,6 +17,7 @@ class AgendaBuilder:
         
         # Logic Grid: Stores ID and Raw Data
         self.grid = [[None for _ in range(self.num_days)] for _ in range(self.num_slots)]
+        self.external_eventids = {}
         self.events = {}
         
         self.colors = {}
@@ -39,6 +40,16 @@ class AgendaBuilder:
             'color': color_name
         })
 
+    def _get_time_range(start_time_str, end_time_str=None, granularity_mins=15):
+        s = datetime.datetime.strptime(start_time_str, "%H:%M")
+        e = datetime.datetime.strptime(end_time_str, "%H:%M") if end_time_str else s
+        res = [s.time()]
+        curr = s + datetime.timedelta(minutes=granularity_mins)
+        while curr < e:
+            res.append(curr.time())
+            curr += datetime.timedelta(minutes=granularity_mins)
+    return res
+
     def _get_day_index(self, date_obj):
         delta = (date_obj - self.start_date).days
         if 0 <= delta < self.num_days:
@@ -54,9 +65,19 @@ class AgendaBuilder:
         slot = diff / (self.granularity.seconds / 60)
         return slot
 
-    def add_event(self, list_of_time_cells, event_color, event_title, event_subtext="", subtext_size="normalsize", open_ended=False):
-        self.event_counter += 1
-        event_id = self.event_counter
+    def add_event(self, event_color, event_title, list_of_time_cells=None, event_subtext=None, subtext_size=None, open_ended=False, event_id=None):
+        list_of_time_cells = list_of_time_cells if list_of_time_cells is not None else []
+        event_subtext = event_subtext if event_subtext is not None else ""
+        subtext_size = subtext_size if subtext_size is not None else "normalsize"
+        
+        if event_id is not None:
+            if event_id not in self.external_eventids:
+                self.event_counter += 1
+                self.external_eventids[event_id] = self.event_counter
+            internal_event_id = self.external_eventids[event_id]   
+        else:
+            self.event_counter += 1
+            internal_event_id = self.event_counter
         
         event_dict = {
                         'color': event_color,
@@ -66,7 +87,7 @@ class AgendaBuilder:
                         'open_ended': open_ended
                     }
         
-        self.events[event_id] = event_dict
+        self.events[internal_event_id] = event_dict
         
         for day, time in list_of_time_cells:
             d_idx = self._get_day_index(day)
@@ -77,14 +98,14 @@ class AgendaBuilder:
                 
                 if 0 <= t_idx_int < self.num_slots:
                     self.grid[t_idx_int][d_idx] = {
-                        'id': event_id,
+                        'id': internal_event_id,
                         'frac_start': t_idx_float, 
                     }
-        return event_id
+        return internal_event_id
     
-    def extend_event(self, event_id, list_of_time_cells):
-        if event_id not in self.events:
-            raise ValueError(f"Event ID {event_id} does not exist.")
+    def extend_event(self, internal_event_id, list_of_time_cells):
+        if internal_event_id not in self.events:
+            raise ValueError(f"Event ID {internal_event_id} does not exist.")
         for day, time in list_of_time_cells:
             d_idx = self._get_day_index(day)
             t_idx_float = self._get_time_index(time)
@@ -94,7 +115,7 @@ class AgendaBuilder:
                 
                 if 0 <= t_idx_int < self.num_slots:
                     self.grid[t_idx_int][d_idx] = {
-                        'id': event_id,
+                        'id': internal_event_id,
                         'frac_start': t_idx_float, 
                     }
 
@@ -695,28 +716,3 @@ class AgendaBuilder:
         
         return "\n".join(latex)
 
-# --- Utility Functions ---
-def day_range(start_date_obj, start_day_str, end_day_str):
-    days_map = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
-    target_start = days_map.get(start_day_str)
-    target_end = days_map.get(end_day_str)
-    if target_start is None or target_end is None: raise ValueError("Invalid day string.")
-    res = []
-    for i in range(7):
-        d = start_date_obj + datetime.timedelta(days=i)
-        w = d.weekday()
-        if target_start <= target_end:
-            if target_start <= w <= target_end: res.append(d)
-        else:
-            if w >= target_start or w <= target_end: res.append(d)
-    return res
-
-def time_range(start_time_str, end_time_str, granularity_mins=15):
-    s = datetime.datetime.strptime(start_time_str, "%H:%M")
-    e = datetime.datetime.strptime(end_time_str, "%H:%M")
-    res = []
-    curr = s
-    while curr < e:
-        res.append(curr.time())
-        curr += datetime.timedelta(minutes=granularity_mins)
-    return res
