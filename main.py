@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib as mplt
 import colorsys
 import re
-import example_agenda
 from agenda_builder import *
 
 # --- Configuration Defaults ---
@@ -229,7 +228,7 @@ def add_csv_events_to_agenda(agenda, events):
 def main():
     """Parses arguments, creates agenda, and generates LaTeX output."""
     parser = argparse.ArgumentParser(
-        description="A comprehensive utility for generating highly customizable LaTeX calendar agendas (using TikZ) either from a structured CSV file or a built-in example schedule. Outputs the finished LaTeX code to standard output or a specified file."
+        description="An utility for generating LaTeX calendar agendas (using TikZ) either from a structured CSV file or a hardcoded example schedule. Outputs the finished LaTeX code to standard output or a specified file."
     )
 
     # --- Agenda Configuration Group ---
@@ -318,6 +317,7 @@ def main():
             return
     else:
         # Load the hardcoded example
+        import example_agenda
         example_agenda.create_example_agenda(agenda)
         print("% Using hardcoded example agenda.")
 
