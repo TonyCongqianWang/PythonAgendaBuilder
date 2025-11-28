@@ -1,0 +1,31 @@
+EVENT_TITLE,EVENT_START,EVENT_END,EVENT_TEXT,EVENT_TEXT_SIZE,EVENT_ID,EVENT_COLOR,IS_OPEN_ENDED,IS_SPECIAL
+Welcome Dinner,2025-11-29 19:00,,Historic City Center Restaurant,,,,True,True
+Registration,2025-12-01 09:00,2025-12-01 09:30,,,1,cArr,False,False
+Opening Ceremony,2025-12-01 09:30,2025-12-01 10:30,Chair: Ada Lovelace\\ Keynote: Alan Turing -- ``On Computable Numbers'',small,2,cWelc,False,False
+Workshop: Compiler Optimization,2025-12-01 10:45,2025-12-01 12:30,"Grace Hopper, John von Neumann",,3,cWork,False,False
+Workshop: Complexity Theory,2025-12-01 13:30,2025-12-01 15:30,"Stephen Cook, Richard Karp",,4,cWork,False,False
+Lunch Break,2025-12-01 12:30,2025-12-01 13:30,Cafeteria,medium,LUNCH,cLunch,False,False
+Networking & Social,2025-12-01 15:30,2025-12-01 16:00,,medium,SOCIAL,cLeis,True,False
+Morning Coffee,2025-12-02 09:00,2025-12-02 09:30,,,5,cArr,False,False
+Session I: Algorithms,2025-12-02 09:30,2025-12-02 11:00,Donald Knuth: The Art of Programming\\ Edsger Dijkstra: Shortest Paths,,6,cLect,False,False
+Poster Session I,2025-12-02 11:15,2025-12-02 12:45,Topics: Algorithms & Data Structures,,7,cWork,False,False
+Group Work: Operating Systems,2025-12-02 13:45,2025-12-02 15:30,"Ken Thompson, Dennis Ritchie",,8,cWork,False,False
+Lunch Break,2025-12-02 12:45,2025-12-02 13:45,Cafeteria,medium,LUNCH,cLunch,False,False
+Networking & Social,2025-12-02 15:30,2025-12-02 16:00,,medium,SOCIAL,cLeis,True,False
+Morning Coffee,2025-12-03 09:00,2025-12-03 09:30,,,9,cArr,False,False
+Session II: Information Theory,2025-12-03 09:30,2025-12-03 11:00,Claude Shannon: A Mathematical Theory\\ Richard Hamming: Error Correcting Codes,,10,cLect,False,False
+Poster Session II,2025-12-03 11:15,2025-12-03 12:45,Topics: Networking & Security,,11,cWork,False,False
+Hackathon Preparation,2025-12-03 13:45,2025-12-03 15:30,"Margaret Hamilton, Katherine Johnson",,12,cPrep,False,False
+Lunch Break,2025-12-03 12:45,2025-12-03 13:45,Cafeteria,medium,LUNCH,cLunch,False,False
+Networking & Social,2025-12-03 15:30,2025-12-03 16:00,,medium,SOCIAL,cLeis,True,False
+Morning Coffee,2025-12-04 09:00,2025-12-04 09:30,,,13,cArr,False,False
+Excursion: Tech Museum,2025-12-04 09:30,2025-12-04 11:30,Guided tour by Tim Berners-Lee,,14,cVisit,False,False
+Surprise Challenge,2025-12-04 13:15,2025-12-04 14:30,,,15,cArr,False,False
+Hackathon Presentations,2025-12-04 13:30,2025-12-04 15:30,"Jury: Linus Torvalds, Guido van Rossum",,16,cPres,False,False
+Lunch Break,2025-12-04 12:00,2025-12-04 13:00,Cafeteria,medium,LUNCH,cLunch,False,False
+Networking & Social,2025-12-04 15:30,2025-12-04 16:00,,medium,SOCIAL,cLeis,True,False
+Morning Coffee,2025-12-05 09:30,2025-12-05 10:00,,,17,cArr,False,False
+Lab Tour: AI & Robotics,2025-12-05 10:00,2025-12-05 11:30,"Marvin Minsky, John McCarthy",,18,cVisit,False,False
+Farewell & Awards,2025-12-05 12:30,2025-12-05 13:30,Closing Remarks,,19,cBye,False,False
+Lunch Break,2025-12-05 11:30,2025-12-05 12:30,Cafeteria,Large,LUNCH,cLunch,False,False
+Networking & Social,2025-12-05 13:30,2025-12-05 16:00,,Large,SOCIAL,cLeis,True,False

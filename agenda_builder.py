@@ -43,8 +43,12 @@ class CompiledAgenda:
 class AgendaBuilder:
     def __init__(self, start_date_str=None, end_date_str=None, start_time=None, end_time=None):
         # User Preferences
-        self.pref_start_date = datetime.datetime.strptime(start_date_str, "%Y%m%d").date() if start_date_str else None
-        self.pref_end_date = datetime.datetime.strptime(end_date_str, "%Y%m%d").date() if end_date_str else None
+        try:
+            self.pref_start_date = datetime.datetime.strptime(start_date_str, "%Y%m%d").date() if start_date_str else None
+            self.pref_end_date = datetime.datetime.strptime(end_date_str, "%Y%m%d").date() if end_date_str else None
+        except ValueError:
+            self.pref_start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date() if start_date_str else None
+            self.pref_end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else None
         self.pref_start_time = datetime.datetime.strptime(start_time, "%H:%M").time() if start_time else None
         self.pref_end_time = datetime.datetime.strptime(end_time, "%H:%M").time() if end_time else None
         
@@ -81,8 +85,8 @@ class AgendaBuilder:
         if isinstance(time_ranges, tuple):
             time_ranges = [time_ranges]
             
-        event_subtext = event_subtext if event_subtext is not None else ""
-        subtext_size = subtext_size if subtext_size is not None else "normalsize"
+        event_subtext = event_subtext if event_subtext else ""
+        subtext_size = subtext_size if subtext_size else "normalsize"
         
         if event_id is not None:
             if event_id not in self.external_eventids:
@@ -147,9 +151,12 @@ class AgendaBuilder:
             for entry in p_ev['ranges']:
                 if len(entry) != 3: continue
                 d_str, s_str, e_str = entry
-                d = datetime.datetime.strptime(d_str, "%Y%m%d").date()
+                try:
+                    d = datetime.datetime.strptime(d_str, "%Y%m%d").date()
+                except ValueError:
+                    d = datetime.datetime.strptime(d_str, "%Y-%m-%d").date()
                 s = datetime.datetime.strptime(s_str, "%H:%M").time()
-                e = datetime.datetime.strptime(e_str, "%H:%M").time()
+                e = datetime.datetime.strptime(e_str, "%H:%M").time() if e_str is not None else None
                 
                 parsed_ranges.append((d, s, e))
                 all_dates.append(d)
@@ -199,7 +206,10 @@ class AgendaBuilder:
             internal_id = item['internal_id']
             for d, s, e in item['ranges']:
                 curr_dt = datetime.datetime.combine(d, s)
-                limit_dt = datetime.datetime.combine(d, e)
+                if e is not None:
+                    limit_dt = datetime.datetime.combine(d, e)
+                else:
+                    limit_dt = curr_dt + granularity
                 
                 while curr_dt < limit_dt:
                     d_idx = _get_day_index(d)
@@ -655,8 +665,9 @@ class AgendaLatexRenderer:
                     
                     main_x2 = x_right - gap_x_right
                     
+                    fill_eps = 0.03
                     # Draw Main
-                    latex.append(rf"\fill[{cell['bg_color']}] ({x_left}, {y_top}) rectangle ({main_x2}, {main_y2});")
+                    latex.append(rf"\fill[{cell['bg_color']}] ({x_left}, {y_top}) rectangle ({main_x2 + fill_eps}, {main_y2 + fill_eps});")
                     if draw_border_t: latex.append(rf"\draw[eventbox] ({x_left}, {y_top}) -- ({main_x2}, {y_top});")
                     if main_is_bottom and not is_open_ended: latex.append(rf"\draw[eventbox] ({x_left}, {main_y2}) -- ({main_x2}, {main_y2});")
                     if draw_border_l: latex.append(rf"\draw[eventbox] ({x_left}, {y_top}) -- ({x_left}, {main_y2});")
@@ -673,7 +684,7 @@ class AgendaLatexRenderer:
                         else:
                             bridge_y2 = base_y_bottom
                         
-                        latex.append(rf"\fill[{cell['bg_color']}] ({bridge_x1}, {y_top}) rectangle ({bridge_x2}, {bridge_y2});")
+                        latex.append(rf"\fill[{cell['bg_color']}] ({bridge_x1}, {y_top}) rectangle ({bridge_x2 + fill_eps}, {bridge_y2 + fill_eps});")
                         if bridge_is_top: latex.append(rf"\draw[eventbox] ({bridge_x1}, {y_top}) -- ({bridge_x2}, {y_top});")
                         if bridge_is_bottom and not is_open_ended: latex.append(rf"\draw[eventbox] ({bridge_x1}, {bridge_y2}) -- ({bridge_x2}, {bridge_y2});")
                         

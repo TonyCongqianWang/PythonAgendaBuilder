@@ -1,0 +1,9 @@
+EVENT_TITLE,EVENT_START,EVENT_END,EVENT_TEXT,EVENT_TEXT_SIZE,EVENT_ID,EVENT_COLOR,IS_OPEN_ENDED,IS_SPECIAL
+Project Kick-off,2025-12-01 09:00,2025-12-01 10:00,Initial planning session.,large,P001,4,False,False
+Code Review (Part 1),2025-12-01 10:30,2025-12-01 12:00,Reviewing architecture design.,Large,P002,cr,False,False
+Project Kick-off,2025-12-02 09:30,2025-12-02 11:30,Follow-up on action items.,large,P001,4,False,False
+Team Sync,2025-12-02 14:00,2025-12-02 14:30,Quick check-in.,small,S001,#F8C471,False,False
+Code Review (Part 2),2025-12-03 10:00,2025-12-03 11:00,Testing and final sign-off.,Large,P003,cr,False,False
+Admin Task,2025-12-03 15:00,2025-12-03 16:00,Filing expense reports.,Large,,auto,False,False
+Open Workshop,2025-12-04 10:00,2025-12-04 12:00,Topics TBD,Large,WORK_A,hex_9B59B6,False,False
+Open Workshop,2025-12-05 10:00,2025-12-05 12:00,Continuation of topic,Large,WORK_B,hex_9B59B6,False,False
