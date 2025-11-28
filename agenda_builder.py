@@ -332,11 +332,15 @@ class AgendaLatexRenderer:
                 # Determine "Center of Gravity" for the text
                 all_cols = [x[1] for x in event_cells]
                 min_col, max_col = min(all_cols), max(all_cols)
-                center_col_float = (min_col + max_col) / 2.0
-                center_col = int(center_col_float)
-                x_offset_cols = center_col_float - center_col
+                center_col = int((min_col + max_col) // 2.0)
+                if (max_col - min_col) % 2 == 0:
+                    x_offset_cols = 0.0
+                    center_col_cells = [x for x in event_cells if x[1] == center_col]
+                else:
+                    x_offset_cols = 0.5
+                    center_col_cells = [x for x in event_cells if x[1] == center_col]
+                    center_col_cells = [x for x in center_col_cells if render_grid[x[0]][center_col + 1]['id'] == eid]
                 
-                center_col_cells = [x for x in event_cells if x[1] == center_col]
                 
                 if not center_col_cells:
                     visual_start_row = min(x[0] for x in event_cells)
