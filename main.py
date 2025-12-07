@@ -28,6 +28,17 @@ RENDER_DEFAULTS = {
     "multirow_correction_factor": 3.5,
 }           
 
+def escape_help_string(s):
+    if s is None:
+        return "None"
+    if not isinstance(s, str):
+        s = str(s)
+    special_chars = {
+        '%': r'%%',
+    }
+    for char, escape_seq in special_chars.items():
+        s = s.replace(char, escape_seq)
+    return s
 
 # --- Main Execution ---
 
@@ -41,31 +52,31 @@ def main():
     group_agenda = parser.add_argument_group('Agenda Configuration (Defaults to Example Settings)')
     group_agenda.add_argument(
         '--start-date', type=str, default=AGENDA_DEFAULTS["start_date_str"],
-        help=f'Start date for the agenda (YYYYMMDD). Default: {AGENDA_DEFAULTS["start_date_str"]}'
+        help=f'Start date for the agenda (YYYYMMDD). Default: {escape_help_string(AGENDA_DEFAULTS["start_date_str"])}'
     )
     group_agenda.add_argument(
         '--end-date', type=str, default=AGENDA_DEFAULTS["end_date_str"],
-        help=f'End date for the agenda (YYYYMMDD). Default: {AGENDA_DEFAULTS["end_date_str"]}'
+        help=f'End date for the agenda (YYYYMMDD). Default: {escape_help_string(AGENDA_DEFAULTS["end_date_str"])}'
     )
     group_agenda.add_argument(
         '--start-time', type=str, default=AGENDA_DEFAULTS["start_time"],
-        help=f'Start time for daily events (HH:MM). Default: {AGENDA_DEFAULTS["start_time"]}'
+        help=f'Start time for daily events (HH:MM). Default: {escape_help_string(AGENDA_DEFAULTS["start_time"])}'
     )
     group_agenda.add_argument(
         '--end-time', type=str, default=AGENDA_DEFAULTS["end_time"],
-        help=f'End time for daily events (HH:MM). Default: {AGENDA_DEFAULTS["end_time"]}'
+        help=f'End time for daily events (HH:MM). Default: {escape_help_string(AGENDA_DEFAULTS["end_time"])}'
     )
     group_agenda.add_argument(
-        '--day-str-format', type=str, default=None,
-        help=f'Format for day string in header row. Default: {AGENDA_DEFAULTS["day_str_format"]}'
+        '--day-str-format', type=str, default=AGENDA_DEFAULTS["day_str_format"],
+        help=f'Format for day string in header row. Default: {escape_help_string(AGENDA_DEFAULTS["day_str_format"])}'
     )
     group_agenda.add_argument(
         '--granularity', type=int, default=AGENDA_DEFAULTS["granularity_minutes"],
-        help=f'Time granularity in minutes. Default: {AGENDA_DEFAULTS["granularity_minutes"]}'
+        help=f'Time granularity in minutes. Default: {escape_help_string(AGENDA_DEFAULTS["granularity_minutes"])}'
     )
     group_agenda.add_argument(
         '--title', type=str, default=AGENDA_DEFAULTS["title"],
-        help=f'Title of the agenda. Default: "{AGENDA_DEFAULTS["title"]}"'
+        help=f'Title of the agenda. Default: "{escape_help_string(AGENDA_DEFAULTS["title"])}"'
     )
     
     # --- Input and Color Options Group ---
