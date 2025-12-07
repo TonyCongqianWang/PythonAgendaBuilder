@@ -71,10 +71,12 @@ class AgendaBuilder:
     def define_color(self, name, r, g, b):
         self.colors[name] = f"{{rgb}}{{{r},{g},{b}}}"
 
-    def add_special_event(self, date_str, time_str, title, subtext, color_name="colVisit"):
+    def add_special_event(self, date_str, time_range, title, subtext, color_name="colVisit"):
+        if isinstance(time_range, str):
+            time_range = (time_range,)
         self.special_events.append({
             'date': date_str,
-            'time': time_str,
+            'time_range': time_range,
             'title': title,
             'subtext': subtext,
             'color': color_name
@@ -88,7 +90,7 @@ class AgendaBuilder:
         event_subtext = event_subtext if event_subtext else ""
         subtext_size = subtext_size if subtext_size else "normalsize"
         
-        if event_id is not None:
+        if not (event_id is None or event_id == "" or event_id.isspace()):
             if event_id not in self.external_eventids:
                 self.event_counter += 1
                 self.external_eventids[event_id] = self.event_counter
@@ -273,6 +275,31 @@ class AgendaLatexRenderer:
             text = text.replace(char, escaped)
         return text
 
+    def _add_special_events_to_latex(self, latex, evs):
+        for ev in evs:
+            self._add_special_event_to_latex(latex, ev)
+
+
+    def _add_special_event_to_latex(self, latex, ev):
+        start_time = self._sanitize(ev['time_range'][0])
+        
+        if len(ev['time_range']) > 1 and ev['time_range'][1]:
+            time_content = f"{start_time} -- {self._sanitize(ev['time_range'][1])}"
+        else:
+            time_content = start_time
+        separator = r"\quad "
+
+        latex.append(rf"\begin{{tcolorbox}}[colback={ev['color']}!30!white, colframe=black, boxrule=1.25pt, title=\textbf{{{self._sanitize(ev['date'])}}}]")
+       
+        latex.append(
+            rf"\textbf{{{time_content}}}"
+            rf"{separator}" 
+            rf"{self._sanitize(ev['title'])} \subtxt{{{self._sanitize(ev['subtext'])}}}"
+        )
+        
+        latex.append(r"\end{tcolorbox}")
+        latex.append(r"\vspace{0.13cm}")
+
     def _create_render_grid(self):
         """
         Transforms the Logical Grid (Data) into a Visual Grid (Layout).
@@ -441,11 +468,7 @@ class AgendaLatexRenderer:
 \vspace{0.23cm}
 """)
         
-        for ev in self.data.special_events:
-            latex.append(rf"\begin{{tcolorbox}}[colback={ev['color']}!30!white, colframe=black, boxrule=1.25pt, title=\textbf{{{self._sanitize(ev['date'])}}}]")
-            latex.append(rf"\textbf{{{self._sanitize(ev['time'])}}} -- {self._sanitize(ev['title'])} \subtxt{{{self._sanitize(ev['subtext'])}}}")
-            latex.append(r"\end{tcolorbox}")
-            latex.append(r"\vspace{0.13cm}")
+        self._add_special_events_to_latex(latex, self.data.special_events)
 
         V_THICK = r"!{\color{black}\vrule width 1.5pt}" 
         V_THIN = r"!{\color{lightgray!60}\vrule width 0.8pt}" 
@@ -568,11 +591,8 @@ class AgendaLatexRenderer:
 {\Huge \textbf{""" + self._sanitize(self.data.title) + r"""}}
 \vspace{0.23cm}
 """)
-        for ev in self.data.special_events:
-            latex.append(rf"\begin{{tcolorbox}}[colback={ev['color']}!30!white, colframe=black, boxrule=1.25pt, title=\textbf{{{self._sanitize(ev['date'])}}}]")
-            latex.append(rf"\textbf{{{self._sanitize(ev['time'])}}} -- {self._sanitize(ev['title'])} \subtxt{{{self._sanitize(ev['subtext'])}}}")
-            latex.append(r"\end{tcolorbox}")
-            latex.append(r"\vspace{0.13cm}")
+
+        self._add_special_events_to_latex(latex, self.data.special_events)
 
         latex.append(r"\noindent\makebox[\textwidth][c]{%")
         if scale != 1.0: latex.append(rf"\scalebox{{{scale}}}{{%")

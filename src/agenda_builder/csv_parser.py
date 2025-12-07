@@ -71,7 +71,7 @@ class ColorManager:
         color_spec = str(color_spec).strip()
 
         # 1. Hex Color (e.g., #FF99AA or FF99AA)
-        hex_match = re.match(r'^#?([0-9a-fA-F]{6})$', color_spec)
+        hex_match = re.match(r'^(?:#|hex_|0x)?([0-9a-fA-F]{6})$', color_spec)
         if hex_match:
             hex_val = hex_match.group(1)
             r = int(hex_val[0:2], 16) / 255.0
@@ -183,8 +183,9 @@ def add_csv_events_to_agenda(agenda, events):
     for event in events:
         if event["is_special"]:
             date_str = event["start_dt"].strftime("%A, %B %d, %Y")
-            time_str = event["start_dt"].strftime("%H:%M")
-            agenda.add_special_event(date_str, time_str, event["title"], event["text"], event["color"])
+            start_time_str = event["start_dt"].strftime("%H:%M")
+            end_time_str = event["end_dt"].strftime("%H:%M") if not pd.isna(event["end_dt"]) else None
+            agenda.add_special_event(date_str, (start_time_str, end_time_str), event["title"], event["text"], event["color"])
         
         elif not event["time_ranges"]:
             print(f"% Warning: Regular event '{event['title']}' on {event['start_dt'].date()} has no time ranges generated (check start/end times or granularity). Skipping.")

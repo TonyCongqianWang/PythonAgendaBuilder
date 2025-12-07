@@ -15,10 +15,13 @@
     stripe/.style={fill=gray!15} 
 }
 
+\definecolor{hex_9B5900}{rgb}{0.6078431372549019,0.34901960784313724,0.0}
+\definecolor{hex_9009B6}{rgb}{0.5647058823529412,0.03529411764705882,0.7137254901960784}
 \definecolor{auto_color_0}{rgb}{0.12156862745098039,0.4666666666666667,0.7058823529411765}
 \definecolor{auto_color_1}{rgb}{0.8901960784313725,0.4666666666666667,0.7607843137254902}
 \definecolor{hex_F8C471}{rgb}{0.9725490196078431,0.7686274509803922,0.44313725490196076}
 \definecolor{auto_color_2}{rgb}{0.17254901960784313,0.6274509803921569,0.17254901960784313}
+\definecolor{hex_9B59B6}{rgb}{0.6078431372549019,0.34901960784313724,0.7137254901960784}
 \definecolor{auto_color_3}{rgb}{0.8588235294117647,0.8588235294117647,0.5529411764705883}
 
 \begin{document}
@@ -26,6 +29,14 @@
 {\Huge \textbf{My Winter School 2025}}
 \vspace{0.23cm}
 
+\begin{tcolorbox}[colback=hex_9B5900!30!white, colframe=black, boxrule=1.25pt, title=\textbf{Saturday, November 29, 2025}]
+\textbf{19:00}\quad Welcome Dinner \subtxt{Historic City Center Restaurant}
+\end{tcolorbox}
+\vspace{0.13cm}
+\begin{tcolorbox}[colback=hex_9009B6!30!white, colframe=black, boxrule=1.25pt, title=\textbf{Wednesday, December 10, 2025}]
+\textbf{16:00 -- 22:00}\quad Christmas Party \subtxt{Historic City Center Restaurant}
+\end{tcolorbox}
+\vspace{0.13cm}
 \noindent\makebox[\textwidth][c]{%
 \scalebox{0.48}{%
 \begin{tikzpicture}[x=1cm, y=-1cm]
@@ -105,6 +116,11 @@
 \draw[eventbox] (12.948, 8.714285714285714) -- (23.8236, 8.714285714285714);
 \draw[eventbox] (12.948, 3.4857142857142853) -- (12.948, 8.714285714285714);
 \draw[eventbox] (23.8236, 3.4857142857142853) -- (23.8236, 8.714285714285714);
+\fill[auto_color_3] (12.948, 14.814285714285713) rectangle (23.8536, 15.715714285714283);
+\draw[eventbox] (12.948, 14.814285714285713) -- (23.8236, 14.814285714285713);
+\draw[eventbox] (12.948, 15.685714285714283) -- (23.8236, 15.685714285714283);
+\draw[eventbox] (12.948, 14.814285714285713) -- (12.948, 15.685714285714283);
+\draw[eventbox] (23.8236, 14.814285714285713) -- (23.8236, 15.685714285714283);
 \fill[hex_F8C471] (12.948, 17.428571428571427) rectangle (23.8536, 19.201428571428572);
 \draw[eventbox] (12.948, 17.428571428571427) -- (23.8236, 17.428571428571427);
 \draw[eventbox] (12.948, 19.17142857142857) -- (23.8236, 19.17142857142857);
@@ -115,21 +131,36 @@
 \draw[eventbox] (24.396, 6.971428571428571) -- (35.2716, 6.971428571428571);
 \draw[eventbox] (24.396, 3.4857142857142853) -- (24.396, 6.971428571428571);
 \draw[eventbox] (35.2716, 3.4857142857142853) -- (35.2716, 6.971428571428571);
+\fill[auto_color_3] (24.396, 18.299999999999997) rectangle (35.3016, 19.201428571428572);
+\draw[eventbox] (24.396, 18.299999999999997) -- (35.2716, 18.299999999999997);
+\draw[eventbox] (24.396, 19.17142857142857) -- (35.2716, 19.17142857142857);
+\draw[eventbox] (24.396, 18.299999999999997) -- (24.396, 19.17142857142857);
+\draw[eventbox] (35.2716, 18.299999999999997) -- (35.2716, 19.17142857142857);
 \fill[auto_color_2] (24.396, 20.91428571428571) rectangle (35.3016, 24.43);
 \draw[eventbox] (24.396, 20.91428571428571) -- (35.2716, 20.91428571428571);
 \draw[eventbox] (24.396, 24.4) -- (35.2716, 24.4);
 \draw[eventbox] (24.396, 20.91428571428571) -- (24.396, 24.4);
 \draw[eventbox] (35.2716, 20.91428571428571) -- (35.2716, 24.4);
-\fill[auto_color_3] (35.844, 3.4857142857142853) rectangle (46.7496, 10.487142857142855);
+\fill[hex_9B59B6] (35.844, 3.4857142857142853) rectangle (46.7496, 10.487142857142855);
 \draw[eventbox] (35.844, 3.4857142857142853) -- (46.7196, 3.4857142857142853);
 \draw[eventbox] (35.844, 10.457142857142856) -- (46.7196, 10.457142857142856);
 \draw[eventbox] (35.844, 3.4857142857142853) -- (35.844, 10.457142857142856);
 \draw[eventbox] (46.7196, 3.4857142857142853) -- (46.7196, 10.457142857142856);
-\fill[auto_color_3] (47.292, 3.4857142857142853) rectangle (58.1976, 10.487142857142855);
+\fill[auto_color_3] (35.844, 11.328571428571427) rectangle (46.7496, 12.229999999999999);
+\draw[eventbox] (35.844, 11.328571428571427) -- (46.7196, 11.328571428571427);
+\draw[eventbox] (35.844, 12.2) -- (46.7196, 12.2);
+\draw[eventbox] (35.844, 11.328571428571427) -- (35.844, 12.2);
+\draw[eventbox] (46.7196, 11.328571428571427) -- (46.7196, 12.2);
+\fill[hex_9B59B6] (47.292, 3.4857142857142853) rectangle (58.1976, 10.487142857142855);
 \draw[eventbox] (47.292, 3.4857142857142853) -- (58.1676, 3.4857142857142853);
 \draw[eventbox] (47.292, 10.457142857142856) -- (58.1676, 10.457142857142856);
 \draw[eventbox] (47.292, 3.4857142857142853) -- (47.292, 10.457142857142856);
 \draw[eventbox] (58.1676, 3.4857142857142853) -- (58.1676, 10.457142857142856);
+\fill[auto_color_3] (47.292, 12.2) rectangle (58.1976, 13.101428571428569);
+\draw[eventbox] (47.292, 12.2) -- (58.1676, 12.2);
+\draw[eventbox] (47.292, 13.07142857142857) -- (58.1676, 13.07142857142857);
+\draw[eventbox] (47.292, 12.2) -- (47.292, 13.07142857142857);
+\draw[eventbox] (58.1676, 12.2) -- (58.1676, 13.07142857142857);
 \draw[timeline] (1.5, 0) -- (1.5, 24.4);
 \draw[timeline] (0, 0) -- (0, 24.4);
 \draw[timeline] (0, 0.8714285714285713) -- (1.5, 0.8714285714285713);
@@ -193,7 +224,11 @@
 \node[anchor=center, align=center, text width=11.248000000000001cm] at (6.9378, 7.842857142857142) {{\Large \textbf{Code Review (Part 1)}} \\ {\Large Reviewing architecture design.}};
 \node[anchor=center, align=center, text width=11.248000000000001cm] at (41.2818, 6.971428571428571) {{\Large \textbf{Open Workshop}} \\ {\Large Topics TBD}};
 \node[anchor=center, align=center, text width=11.248000000000001cm] at (52.729800000000004, 6.971428571428571) {{\Large \textbf{Open Workshop}} \\ {\Large Continuation of topic}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (41.2818, 11.764285714285712) {{\Large \textbf{Surprise Challenge}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (52.729800000000004, 12.635714285714284) {{\Large \textbf{Surprise Challenge}} \\ {\normalsize }};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (18.3858, 15.249999999999998) {{\Large \textbf{Surprise Challenge}} \\ {\normalsize }};
 \node[anchor=center, align=center, text width=11.248000000000001cm] at (18.3858, 18.299999999999997) {{\Large \textbf{Team Sync}} \\ {\small Quick check-in.}};
+\node[anchor=center, align=center, text width=11.248000000000001cm] at (29.8338, 18.735714285714284) {{\Large \textbf{Surprise Challenge}} \\ {\normalsize }};
 \node[anchor=center, align=center, text width=11.248000000000001cm] at (29.8338, 22.657142857142855) {{\Large \textbf{Admin Task}} \\ {\Large Filing expense reports.}};
 \end{tikzpicture}
 }
