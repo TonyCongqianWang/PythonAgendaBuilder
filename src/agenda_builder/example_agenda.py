@@ -1,8 +1,3 @@
-from agenda_builder import *
-
-
-# --- Hardcoded Example Agenda (Used as Default) ---
-
 def add_example_colors(agenda):
     """Defines the colors used in the hardcoded example agenda."""
     agenda.define_color("cArr", 0.9, 0.96, 0.9)

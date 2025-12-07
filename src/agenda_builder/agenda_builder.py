@@ -161,7 +161,8 @@ class AgendaBuilder:
                 parsed_ranges.append((d, s, e))
                 all_dates.append(d)
                 all_times.append(s)
-                all_times.append(e)
+                if e is not None:
+                    all_times.append(e)
             
             parsed_pending_events.append({
                 'internal_id': internal_id,
