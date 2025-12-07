@@ -243,15 +243,15 @@ class AgendaBuilder:
         )
         return self._cached_compilation
 
-    def generate_latex_tikz(self, granularity_minutes=None, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2, gap_x_pct=0.03, gap_y_pct=0.0, ext_y_pct=0.15):
+    def generate_latex_tikz(self, granularity_minutes=None, day_str_format=None, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2, gap_x_pct=0.03, gap_y_pct=0.0, ext_y_pct=0.15):
         compiled_data = self.build(granularity_minutes)
         renderer = AgendaLatexRenderer(compiled_data)
-        return renderer.render_tikz(scale, width_pct, height_pct, stripe_interval, gap_x_pct, gap_y_pct, ext_y_pct)
+        return renderer.render_tikz(day_str_format, scale, width_pct, height_pct, stripe_interval, gap_x_pct, gap_y_pct, ext_y_pct)
 
-    def generate_latex_legacygrid(self, granularity_minutes=None, scale=0.4, width_pct=1.0, height_pct=1.2, multirow_correction_factor=3.5, text_vpos_bias=-0.0):
+    def generate_latex_legacygrid(self, granularity_minutes=None, day_str_format=None, scale=0.4, width_pct=1.0, height_pct=1.2, multirow_correction_factor=3.5, text_vpos_bias=-0.0):
         compiled_data = self.build(granularity_minutes)
         renderer = AgendaLatexRenderer(compiled_data)
-        return renderer.render_legacy_grid(scale, width_pct, height_pct, multirow_correction_factor, text_vpos_bias)
+        return renderer.render_legacy_grid(day_str_format, scale, width_pct, height_pct, multirow_correction_factor, text_vpos_bias)
 
 
 
@@ -405,9 +405,12 @@ class AgendaLatexRenderer:
                 
         return render_grid
 
-    def render_legacy_grid(self, scale=0.4, width_pct=1.0, height_pct=1.2, multirow_correction_factor=3.5, text_vpos_bias=-0.0):
+    def render_legacy_grid(self, day_str_format=None, scale=0.4, width_pct=1.0, height_pct=1.2, multirow_correction_factor=3.5, text_vpos_bias=-0.0):
         USABLE_WIDTH_CM = 26.7
         USABLE_HEIGHT_CM = 18.0
+
+        if day_str_format is None:
+            day_str_format = "%a, %d.%m"
         
         target_width = USABLE_WIDTH_CM * width_pct
         target_height = USABLE_HEIGHT_CM * height_pct
@@ -493,7 +496,7 @@ class AgendaLatexRenderer:
         header_row = f"\\multicolumn{{1}}{{{V_THICK}c{V_THICK}}}{{\\textbf{{Time}}}}"
         current_date = self.data.start_date
         for i in range(self.data.num_days):
-            day_str = current_date.strftime("%a, %d.%m")
+            day_str = current_date.strftime(day_str_format)
             style = f"{V_THICK}c"
             if i == self.data.num_days - 1: style += V_THICK
             header_row += f" & \\multicolumn{{1}}{{{style}}}{{\\textbf{{{day_str}}}}}"
@@ -545,11 +548,14 @@ class AgendaLatexRenderer:
         latex.append(r"\end{document}")
         return "\n".join(latex)
 
-    def render_tikz(self, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2, gap_x_pct=0.03, gap_y_pct=0.0, ext_y_pct=0.15):
+    def render_tikz(self, day_str_format=None, scale=0.46, width_pct=2.2, height_pct=1.4, stripe_interval=2, gap_x_pct=0.03, gap_y_pct=0.0, ext_y_pct=0.15):
         USABLE_WIDTH_CM = 26.7
         USABLE_HEIGHT_CM = 18.0
         total_width = USABLE_WIDTH_CM * width_pct
         total_height = USABLE_HEIGHT_CM * height_pct
+
+        if day_str_format is None:
+            day_str_format = "%a, %d.%m"
         
         time_col_width = 1.5
         day_col_width = (total_width - time_col_width) / self.data.num_days
@@ -617,7 +623,7 @@ class AgendaLatexRenderer:
         for i in range(self.data.num_days):
             x_start = time_col_width + i * day_col_width
             x_end = x_start + day_col_width
-            day_str = current_date.strftime("%a, %d.%m")
+            day_str = current_date.strftime(day_str_format)
             latex.append(rf"\draw[timeline, fill=white] ({x_start}, {-header_height}) rectangle ({x_end}, 0);")
             latex.append(rf"\node[anchor=center] at ({x_start + day_col_width/2}, {-header_height/2}) {{\textbf{{{day_str}}}}};")
             current_date += datetime.timedelta(days=1)

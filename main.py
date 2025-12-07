@@ -14,7 +14,8 @@ AGENDA_DEFAULTS = {
     "start_time": None,
     "end_time": None,
     "granularity_minutes": 15,
-    "title": "My Winter School 2025"
+    "title": "My Winter School 2025",
+    "day_str_format": "%a, %d.%m",
 }
 
 RENDER_DEFAULTS = {
@@ -53,6 +54,10 @@ def main():
     group_agenda.add_argument(
         '--end-time', type=str, default=AGENDA_DEFAULTS["end_time"],
         help=f'End time for daily events (HH:MM). Default: {AGENDA_DEFAULTS["end_time"]}'
+    )
+    group_agenda.add_argument(
+        '--day-str-format', type=str, default=None,
+        help=f'Format for day string in header row. Default: {AGENDA_DEFAULTS["day_str_format"]}'
     )
     group_agenda.add_argument(
         '--granularity', type=int, default=AGENDA_DEFAULTS["granularity_minutes"],
@@ -130,6 +135,7 @@ def main():
         # Generate using the preferred TikZ method
         latex_code = agenda.generate_latex_tikz(
             granularity_minutes=args.granularity,
+            day_str_format=args.day_str_format,
             scale=args.scale,
             width_pct=args.width_pct,
             height_pct=args.height_pct,
@@ -141,6 +147,7 @@ def main():
         # Generate using the legacy grid method
         latex_code = agenda.generate_latex_legacygrid(
             granularity_minutes=args.granularity,
+            day_str_format=args.day_str_format,
             scale=args.scale,
             width_pct=args.width_pct,
             height_pct=args.height_pct,
